@@ -15,7 +15,7 @@ rm -f ~/.bashrc
 rm -f ~/.hgrc
 rm -f ~/.hgignore
 rm -f ~/.gitconfig
-rm -f ~/.gitignore_global
+rm -f ~/.gitignore
 
 ln  -s ${dotfile_dir}/.aspell.en.prepl ~/.aspell.en.prepl
 ln  -s ${dotfile_dir}/.aspell.en.pws   ~/.aspell.en.pws
