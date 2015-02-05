@@ -11,6 +11,7 @@ dotfile_dir=`pwd`
 rm -f ~/.aspell.en.prepl
 rm -f ~/.aspell.en.pws
 rm -f ~/.bash_profile
+rm -f ~/.bash_aliases
 rm -f ~/.bashrc
 rm -f ~/.hgrc
 rm -f ~/.hgignore
@@ -20,6 +21,7 @@ rm -f ~/.gitignore
 ln  -s ${dotfile_dir}/.aspell.en.prepl ~/.aspell.en.prepl
 ln  -s ${dotfile_dir}/.aspell.en.pws   ~/.aspell.en.pws
 ln  -s ${dotfile_dir}/.bash_profile    ~/.bash_profile
+ln  -s ${dotfile_dir}/.bash_aliases    ~/.bash_aliases
 ln  -s ${dotfile_dir}/.bashrc          ~/.bashrc
 ln  -s ${dotfile_dir}/.hgrc            ~/.hgrc
 ln  -s ${dotfile_dir}/.hgignore        ~/.hgignore
