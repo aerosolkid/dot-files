@@ -13,7 +13,9 @@ shopt -s cdspell
 umask 002
 
 export PATH=~/bin:~/Dropbox/bin:/usr/local/bin:/usr/local/mysql/bin:$PATH
-export PATH=$PATH:$TNS_ADMIN/bin
+if [ -n "$ORACLE_HOME" ]; then
+    export PATH=$PATH:$ORACLE_HOME/bin
+fi
 export MANPATH=/opt/local/man:$MANPATH
 
 if [ -f ~/.git-prompt.sh ]; then
