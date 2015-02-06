@@ -18,29 +18,7 @@ export MANPATH=/opt/local/man:$MANPATH
 
 export DISPLAY=:0.0
 
-#  if [ "$EMACS" = "t" -o "${hnam}" = "beanie" -o "${hnam}" = "omaedcwww033" -o "${hnam}" = "omaedcwww034" -o "${hnam}" = "omaedcwww035" -o "${hnam}" = "omaedcwww036" -o "${hnam}" = "omaedcwww041" -o "${hnam}" = "omaedcwww042" -o "${hnam}" = "omaedcwww030" -o "${hnam}" = "omaedcwww031" ]
-#  then
-    function _hg_ps1() {
-        hg prompt " ({root|basename}:{branch})" 2> /dev/null
-    }
-
-    if [ "$id" = "0" ]
-    then
-        PS1="\[\033[01;32m\]\u@${hnam}\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]# "
-    else
-        PS1='\[\033[01;32m\]\u@\h$(_hg_ps1)\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]$ '
-    fi
-    export PS1
-    unset PROMPT_COMMAND
-#  else
-    #  function _update_ps1()
-    #  {
-        #  export PS1="$(~/Dropbox/src/powerline-bash/powerline-bash.py $?)"
-    #  }
-    #  export PROMPT_COMMAND="_update_ps1"
-#  fi
-
-if [ "${hnam}" != "omaedcwww044" ]
+if [ "${hnam}" != "omaedcwww029" ]
 then
     export TNS_ADMIN="/Usrs/mpc/instantclient_10_2"
 else
