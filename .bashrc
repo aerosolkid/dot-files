@@ -1,9 +1,6 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-id=`id -u`
-hnam=`hostname -s | tr '[:upper:]' '[:lower:]'`
-
 HISTIGNORE="&:ls:[bf]g:exit"
 HISTCONTROL=ignoreboth
 HISTSIZE=1000
@@ -15,12 +12,11 @@ shopt -s cdspell
 
 umask 002
 
-if [ ${EMACS:-f} = "t" ]; then
-    export TERM=xterm
-fi
-
 export PATH=~/bin:~/Dropbox/bin:/usr/local/bin:/opt/local/bin:/opt/local/sbin:/opt/local/libexec/gnubin:/usr/local/mysql/bin:$PATH
 export LD_LIBRARY_PATH=/opt/local/lib
+if [ -n "$ORACLE_HOME" ]; then
+    export PATH=$PATH:$ORACLE_HOME/bin
+fi
 export MANPATH=/opt/local/man:$MANPATH
 
 if [ -f ~/.git-prompt.sh ]; then
@@ -61,16 +57,12 @@ function be_get_branch {
 export GIT_PS1_SHOWDIRTYSTATE=yes
 #export PS1="\$(be_get_branch "$2")${PS1}";
 
-#http://bashrcgenerator.com
-export PS1="\[\e[00;33m\]\u\[\e[0m\]\[\e[00;37m\]@\h:\[\e[0m\]\[\e[00;36m\][\W\[\e[0m\]\[\e[00;35m\]\$(be_get_branch "$2")\[\e[0m\]\[\e[00;36m\]]\[\e[0m\]\[\e[00;37m\]\\$ \[\e[0m\]"
-
-if [ "${hnam}" != "omaedcwww044" ]; then
-    export TNS_ADMIN="/Usrs/mpc/instantclient_10_2"
-    export PATH=$PATH:$TNS_ADMIN/bin
-else
-    export LPDEST=HP_Laserjet_8150
-    export LD_LIBRARY_PATH=/usr/lib/oracle/10.2.0.4/client/lib
+if [ ${EMACS:-f} = "t" ]; then
+    export TERM=xterm
 fi
+#export PS1="\u@\h:[\W\$(be_get_branch "$2")]\\$ "
+#http://bashrcgenerator.com
+export PS1="\[\e[00;33m\]\u\[\e[0m\]\[\e[00;37m\]@\h:\[\e[0m\]\[\e[00;36m\][\W\[\e[0m\]\[\e[00;35m\]\$(be_get_branch "$2")\[\e[0m\]\[\e[00;36m\]]\[\e[0m\]\[\e[00;37m\]\[\e[0m\]\\$ "
 
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
