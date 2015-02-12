@@ -19,7 +19,7 @@ if [ ${EMACS:-f} = "t" ]; then
     export TERM=xterm
 fi
 
-export PATH=~/bin:~/Dropbox/bin:/usr/local/bin:/usr/local/mysql/bin:$PATH
+export PATH=~/bin:~/Dropbox/bin:/usr/local/bin:/opt/local/bin:/opt/local/sbin:/opt/local/libexec/gnubin:/usr/local/mysql/bin:$PATH
 export LD_LIBRARY_PATH=/opt/local/lib
 export MANPATH=/opt/local/man:$MANPATH
 
