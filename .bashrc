@@ -16,6 +16,9 @@ export PATH=~/bin:~/Dropbox/bin:/usr/local/bin:/usr/local/mysql/bin:$PATH
 if [ -n "$ORACLE_HOME" ]; then
     export PATH=$PATH:$ORACLE_HOME/bin
 fi
+if [ -d /ipg/bin ]; then
+    export PATH=$PATH:/ipg/bin
+fi
 export MANPATH=/opt/local/man:$MANPATH
 
 if [ -f ~/.git-prompt.sh ]; then

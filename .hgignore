@@ -1,4 +1,6 @@
 syntax: glob
+*.flv
+*.swf
 *.old
 *.new
 *.ini
@@ -16,5 +18,7 @@ syntax: glob
 *.bkp
 *.o~*
 *.sav
+*.DIFF
 publish/*
 intermediate/*
+config.inc
