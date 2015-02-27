@@ -12,7 +12,8 @@ shopt -s cdspell
 
 umask 002
 
-export PATH=~/bin:~/Dropbox/bin:/usr/local/bin:/usr/local/mysql/bin:$PATH
+export PATH=~/bin:~/Dropbox/bin:/usr/local/bin:/opt/local/bin:/opt/local/sbin:/opt/local/libexec/gnubin:/usr/local/mysql/bin:$PATH
+export LD_LIBRARY_PATH=/opt/local/lib
 if [ -n "$ORACLE_HOME" ]; then
     export PATH=$PATH:$ORACLE_HOME/bin
 fi
