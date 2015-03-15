@@ -1,0 +1,39 @@
+# PATH like a bawss
+
+PATH=~/bin
+
+if [ -d ~/Dropbox/bin ]; then
+  PATH=$PATH=~/Dropbox/bin
+fi
+
+if [ -d /usr/local/bin ]; then
+  PATH=$PATH=/usr/local/bin
+fi
+
+if [ -d /opt/local/bin ]; then
+  PATH=$PATH=/opt/local/bin
+  PATH=$PATH:/opt/local/sbin
+  PATH=$PATH:/opt/local/libexec/gnubin
+fi
+
+if [ -d /usr/local/mysql/bin ]; then
+  PATH=$PATH:/usr/local/mysql/bin
+fi
+
+PATH=$PATH:/usr/bin
+PATH=$PATH:/bin
+PATH=$PATH:/usr/sbin
+PATH=$PATH:/sbin
+
+if [ -d /opt/X11/bin ]; then
+  PATH=$PATH:/opt/X11/bin
+fi
+
+if [ -n "$ORACLE_HOME" ]; then
+  PATH=$PATH:$ORACLE_HOME/bin
+fi
+if [ -d /ipg/bin ]; then
+  PATH=$PATH:/ipg/bin
+fi
+
+export PATH
