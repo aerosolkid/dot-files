@@ -17,3 +17,6 @@ fi
 if [ -d /usr/local/share/man/man ]; then
   export MANPATH=/usr/local/share/man/man:$MANPATH
 fi
+if [ -d /usr/local/opt/coreutils/libexec/gnuman ]; then
+  export MANPATH=/usr/local/opt/coreutils/libexec/gnuman:$MANPATH
+fi
