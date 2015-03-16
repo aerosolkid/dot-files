@@ -1,3 +1,4 @@
+# -*- mode: shell-script -*-
 # Easier navigation: .., ..., ~ and -
 alias ..="cd .."
 alias cd..="cd .."
@@ -55,21 +56,24 @@ alias lsd='ls -l | grep "^d"'
 alias c='pygmentize -O style=monokai -f console256 -g'
 
 # generic colouriser
-GRC=`which grc`
-if [ "$TERM" != dumb ] && [ -n "$GRC" ]
-then
-    alias colourify="$GRC -es --colour=auto"
-    alias configure='colourify ./configure'
-    alias diff='colourify diff'
-    alias make='colourify make'
-    alias gcc='colourify gcc'
-    alias g++='colourify g++'
-    alias as='colourify as'
-    alias gas='colourify gas'
-    alias ld='colourify ld'
-    alias netstat='colourify netstat'
-    alias ping='colourify ping'
-    alias traceroute='colourify /usr/sbin/traceroute'
+which grc > /dev/null 2>&1
+grc_not_found=$?
+if [ $grc_not_found -eq 0 ]; then
+  GRC=`which grc`     
+  if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then 
+      alias colourify="$GRC -es --colour=auto"
+      alias configure='colourify ./configure'
+      alias diff='colourify diff'
+      alias make='colourify make'
+      alias gcc='colourify gcc'
+      alias g++='colourify g++'
+      alias as='colourify as'
+      alias gas='colourify gas'
+      alias ld='colourify ld'
+      alias netstat='colourify netstat'
+      alias ping='colourify ping'
+      alias traceroute='colourify /usr/sbin/traceroute'
+  fi  
 fi
 
 # Enable aliases to be sudo’ed

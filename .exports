@@ -1,3 +1,4 @@
+# -*- mode: shell-script -*-
 # Omit duplicates and commands that begin with a space from history.
 export HISTCONTROL='ignoreboth';
 export HISTIGNORE='&:ls:[bf]g:exit'
