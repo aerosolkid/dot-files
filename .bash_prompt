@@ -42,4 +42,4 @@ if [ ${EMACS:-f} = "t" ]; then
 fi
 #export PS1="\u@\h:[\W\$(be_get_branch "$2")]\\$ "
 #http://bashrcgenerator.com
-export PS1="\[\e[00;33m\]\u\[\e[0m\]\[\e[00;37m\]@\h:\[\e[0m\]\[\e[00;36m\][\W\[\e[0m\]\[\e[00;35m\]\$(be_get_branch "$2")\[\e[0m\]\[\e[00;36m\]]\[\e[0m\]\[\e[00;37m\]\[\e[0m\]\\$ "
+export PS1="\[[00;33m\]\u\[[0m\]\[[00;37m\]@\h:\[[0m\]\[[00;36m\][\W\[[0m\]\[[00;35m\]\$(be_get_branch "$2")\[[0m\]\[[00;36m\]]\[[0m\]\[[00;37m\]\[[0m\]\\$ "
