@@ -1,4 +1,4 @@
-personal_ws-1.1 en 95 
+personal_ws-1.1 en 96 
 Reischl
 Predrag
 Hoboken
@@ -28,8 +28,8 @@ peoplesoft
 eemium
 CMS
 Chipotle
-IDM
 EWR
+IDM
 UAT
 Sucheela
 JoAnn's
@@ -45,8 +45,8 @@ CSAs
 CSA
 deliverables
 Rebecca
-GTNs
 GSS's
+GTNs
 Nagios
 architected
 Amex
@@ -67,6 +67,7 @@ GTN
 GSS
 CDB
 remediations
+memcache
 Bornhorst
 expander
 hyperion

@@ -17,23 +17,16 @@ brew cask install suspicious-package
 
 # daily
 #brew cask install alfred
-brew cask install backblaze
-brew cask install bartender
+#brew cask install bartender
+brew cask install clamxav
 brew cask install controlplane
 brew cask install default-folder-x
-brew cask install divvy
-brew cask install dropbox
 brew cask install emacs
-brew cask install evernote
 brew cask install flux
-#brew cask install gyazo
-brew cask install macpaw-gemini
-brew cask install marked
-brew cask install onepassword
+brew cask install hazel
 #brew cask install rescuetime
 brew cask install textexpander
 brew cask install totalfinder
-brew cask install transporter-desktop
 brew cask install quicksilver
 brew cask install vmware-fusion
 
@@ -43,9 +36,7 @@ brew cask install iterm2
 brew cask install imagealpha
 brew cask install imageoptim
 brew cask install kaleidoscope
-brew cask install livereload
 brew cask install sourcetree
-brew cask install xscope
 
 # fun
 #brew cask install limechat
@@ -53,7 +44,9 @@ brew cask install xscope
 brew cask install vimediamanager
 
 # browsers
+brew cask install google-chrome
 brew cask install google-chrome-canary
+brew cask install firefox
 brew cask install firefox-nightly --force
 brew cask install webkit-nightly --force
 #brew cask install chromium --force

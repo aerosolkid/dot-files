@@ -45,7 +45,10 @@ brew install ffmpeg --with-libvpx
 brew install git
 brew install gpg2
 brew install highlight
+brew install hg
 brew install imagemagick --with-webp
+brew install mysql
+ln -sfv /usr/local/opt/mysql/*.plist ~/Library/LaunchAgents
 brew install node # This installs `npm` too using the recommended installation method
 brew install paperkey
 brew install pv
