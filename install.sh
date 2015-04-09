@@ -19,7 +19,7 @@ rm -f ~/.bash_profile
 rm -f ~/.bash_prompt
 rm -f ~/.bashrc
 rm -f ~/.exports
-rm -f ~/.funtcions
+rm -f ~/.functions
 rm -f ~/.gitconfig
 rm -f ~/.gitignore
 rm -f ~/.hgrc
