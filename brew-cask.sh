@@ -28,7 +28,7 @@ brew cask install hazel
 brew cask install textexpander
 brew cask install totalfinder
 brew cask install quicksilver
-brew cask install vmware-fusion
+#brew cask install vmware-fusion
 
 # dev
 brew cask install iterm2
