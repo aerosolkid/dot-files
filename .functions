@@ -30,7 +30,7 @@ function phpserver() {
     local port="${1:-4000}";
     local ip=$(ipconfig getifaddr en0);
     sleep 1 && open "http://${ip}:${port}/" &
-    php -S "${ip}:${port}";
+    php -c . -S "${ip}:${port}";
 }
 
 # Syntax-highlight JSON strings or files

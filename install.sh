@@ -18,6 +18,7 @@ rm -f ~/.bash_aliases
 rm -f ~/.bash_profile
 rm -f ~/.bash_prompt
 rm -f ~/.bashrc
+rm -f ~/.ctags
 rm -f ~/.exports
 rm -f ~/.functions
 rm -f ~/.gitconfig
@@ -32,6 +33,7 @@ ln -s ${dotfile_dir}/.aspell.en.pws   ~/
 ln -s ${dotfile_dir}/.bash_profile    ~/
 ln -s ${dotfile_dir}/.bash_prompt     ~/
 ln -s ${dotfile_dir}/.bashrc          ~/
+ln -s ${dotfile_dir}/.ctags           ~/
 ln -s ${dotfile_dir}/.exports         ~/
 ln -s ${dotfile_dir}/.functions       ~/
 ln -s ${dotfile_dir}/.gitconfig       ~/

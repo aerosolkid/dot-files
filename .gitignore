@@ -3,6 +3,7 @@
 *.ini
 *.orig
 *.rej
+*.cnf
 *~
 *#
 *.o
@@ -18,3 +19,4 @@
 publish/*
 intermediate/*
 ssh
+TAGS
