@@ -22,11 +22,11 @@ brew cask install clamxav
 brew cask install controlplane
 brew cask install default-folder-x
 brew cask install emacs
-brew cask install flux
+#brew cask install flux
 brew cask install hazel
 #brew cask install rescuetime
-brew cask install textexpander
-brew cask install totalfinder
+#brew cask install textexpander
+#brew cask install totalfinder
 brew cask install quicksilver
 #brew cask install vmware-fusion
 
@@ -45,10 +45,10 @@ brew cask install vimediamanager
 
 # browsers
 brew cask install google-chrome
-brew cask install google-chrome-canary
+#brew cask install google-chrome-canary
 brew cask install firefox
-brew cask install firefox-nightly --force
-brew cask install webkit-nightly --force
+#brew cask install firefox-nightly --force
+#brew cask install webkit-nightly --force
 #brew cask install chromium --force
 #brew cask install torbrowser
 

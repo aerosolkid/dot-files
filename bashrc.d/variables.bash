@@ -1,4 +1,14 @@
-# -*- mode: shell-script -*-
+export ALTERNATE_EDITOR=""
+export EDITOR="emacsclient --tty"
+export EMAIL="mark@mpc.io"
+export GPG_TTY=$(tty)
+export HOMEBREW_NO_ANALYTICS=1
+export LANG="en_US"
+export LC_ALL="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+export NAME="Mark P. Clements"
+export PROMPT_DIRTRIM=3
+
 # Omit duplicates and commands that begin with a space from history.
 export HISTCONTROL='ignoreboth';
 export HISTIGNORE='&:ls:[bf]g:exit'
@@ -20,4 +30,10 @@ if [ -d /usr/local/share/man/man ]; then
 fi
 if [ -d /usr/local/opt/coreutils/libexec/gnuman ]; then
   export MANPATH=/usr/local/opt/coreutils/libexec/gnuman:$MANPATH
+fi
+
+### local config settings, if any
+
+if [ -e $HOME/.bashrc.local ]; then
+  source $HOME/.bashrc.local
 fi

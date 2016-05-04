@@ -1,14 +1,27 @@
+[alias]
+  cm = commit -m
+  stat = status -sb
+  hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+  lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 [user]
-	name = mpc
-	email = mark@mpc.io
+  name = mpc
+  email = mark@mpc.io
+[color]
+  ui = true
+[color "diff"]
+  meta = bold cyan
+[color "grep"]
+  filename = magenta
+  match = bold red
+  linenumber = bold blue
 [core]
-	excludesfile = /Users/mpc/.gitignore
+  excludesfile = ~/.gitignore
 [difftool "sourcetree"]
-	cmd = /usr/local/bin/ksdiff -w \"$LOCAL\" \"$REMOTE\"
-	path = 
+  cmd = /usr/local/bin/ksdiff -w \"$LOCAL\" \"$REMOTE\"
+  path = 
 [mergetool "sourcetree"]
-	cmd = /usr/local/bin/ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
-	trustExitCode = true
+  cmd = /usr/local/bin/ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+  trustExitCode = true
 [credential]
   helper = osxkeychain
 [push]

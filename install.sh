@@ -11,6 +11,9 @@ set -eu
 
 dotfile_dir=`pwd`
 
+# Create necessary directories
+mkdir -p ~/.ssh
+
 rm -f ~/.aliases
 rm -f ~/.aspell.en.prepl
 rm -f ~/.aspell.en.pws
@@ -27,17 +30,16 @@ rm -f ~/.hgrc
 rm -f ~/.hgignore
 rm -f ~/.path
 
-ln -s ${dotfile_dir}/.aliases         ~/
-ln -s ${dotfile_dir}/.aspell.en.prepl ~/
-ln -s ${dotfile_dir}/.aspell.en.pws   ~/
-ln -s ${dotfile_dir}/.bash_profile    ~/
-ln -s ${dotfile_dir}/.bash_prompt     ~/
-ln -s ${dotfile_dir}/.bashrc          ~/
-ln -s ${dotfile_dir}/.ctags           ~/
-ln -s ${dotfile_dir}/.exports         ~/
-ln -s ${dotfile_dir}/.functions       ~/
-ln -s ${dotfile_dir}/.gitconfig       ~/
-ln -s ${dotfile_dir}/.gitignore       ~/
-ln -s ${dotfile_dir}/.hgrc            ~/
-ln -s ${dotfile_dir}/.hgignore        ~/
-ln -s ${dotfile_dir}/.path            ~/
+ln -s ${dotfile_dir}/aspell.en.prepl ~/.aspell.en.prepl
+ln -s ${dotfile_dir}/aspell.en.pws   ~/.aspell.en.pws
+ln -s ${dotfile_dir}/bashrc          ~/.bashrc
+ln -s ${dotfile_dir}/bashrc.d        ~/.bashrc.d
+ln -s ${dotfile_dir}/ctags           ~/.ctags
+ln -s ${dotfile_dir}/gitconfig       ~/.gitconfig
+ln -s ${dotfile_dir}/gitignore       ~/.gitignore
+ln -s ${dotfile_dir}/hgrc            ~/.hgrc
+ln -s ${dotfile_dir}/hgignore        ~/.hgignore
+
+# Link .bash_profile -> .bashrc
+rm -f ~/.bash_profile
+ln -s ~/.bashrc ~/.bash_profile

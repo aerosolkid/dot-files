@@ -1,4 +1,8 @@
-# -*- mode: shell-script -*-
+# Print path components, each on its own line
+function path() {
+  echo $PATH | tr ':' '\n'
+}
+
 # Create a new directory and enter it
 function mkd() {
     mkdir -p "$@" && cd "$_";
@@ -12,7 +16,7 @@ function cdf() { # short for `cdfinder`
 # copy public key to remote machine
 function authme() {
     ssh "$1" 'mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys' \
-        < ~/.ssh/id_dsa.pub
+        < ~/.ssh/id_rsa.pub
 }
 
 # Start an HTTP server from a directory, optionally specifying the port

@@ -1,4 +1,3 @@
-# -*- mode: shell-script -*-
 # PATH like a bawss
 
 PATH=~/bin
@@ -9,6 +8,10 @@ fi
 
 if [ -d /usr/local/bin ]; then
   PATH=$PATH:/usr/local/bin
+fi
+
+if [ -d /usr/local/sbin ]; then
+  PATH=$PATH:/usr/local/sbin
 fi
 
 if [ -d /opt/local/bin ]; then
