@@ -36,7 +36,7 @@ function be_get_branch {
 export GIT_PS1_SHOWDIRTYSTATE=yes
 #export PS1="\$(be_get_branch "$2")${PS1}";
 
-if [ ${EMACS:-f} = "t" ]; then
+if [ "${EMACS:-f}" = "t" ]; then
     export TERM=xterm
 fi
 #export PS1="\u@\h:[\W\$(be_get_branch "$2")]\\$ "

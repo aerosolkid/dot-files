@@ -1,0 +1,950 @@
+#+TITLE: Emacs configuration
+
+* Use sensible-defaults.el
+
+Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for some basic settings.
+
+#+BEGIN_SRC emacs-lisp
+  (load-file "~/src/sensible-defaults.el/sensible-defaults.el")
+  (sensible-defaults/use-all-settings)
+  (sensible-defaults/use-all-keybindings)
+#+END_SRC
+
+* Set personal information
+
+#+BEGIN_SRC emacs-lisp
+  (setq user-full-name "Mark P. Clements"
+        user-mail-address "mark@mpc.io"
+        calendar-latitude 40.7
+        calendar-longitude -74.0
+        calendar-location-name "Hoboken, NJ")
+#+END_SRC
+
+* UTF-8, baby
+
+#+BEGIN_SRC emacs-lisp
+  (prefer-coding-system 'utf-8)
+  (when (display-graphic-p)
+    (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+#+END_SRC
+
+* History of many different sorts
+
+#+BEGIN_SRC emacs-lisp
+  ; http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html#sec-10-3-2
+  (setq savehist-file "~/.emacs.d/savehist")
+  (savehist-mode +1)
+  (setq savehist-save-minibuffer-history +1)
+  ;;(setq savehist-additional-variables
+  ;;      '(kill-ring
+  ;;        search-ring
+  ;;        regexp-search-ring))
+
+  (require 'saveplace)
+  (setq save-place-file "~/.emacs.d/places")
+  (setq-default save-place t)                   ;; activate it for all buffers
+#+END_SRC
+
+* Package management
+
+I use =cask= and =pallet= for managing packages.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'cask "/usr/local/share/emacs/site-lisp/cask/cask.el")
+  (cask-initialize)
+  (require 'pallet)
+#+END_SRC
+
+* Utility functions
+
+Define a big ol' bunch of handy utility functions.
+
+#+BEGIN_SRC emacs-lisp
+  (defun hrs/view-buffer-name ()
+    "Display the filename of the current buffer."
+    (interactive)
+    (message (buffer-file-name)))
+
+  (defun hrs/generate-scratch-buffer ()
+    "Create and switch to a temporary scratch buffer with a random
+       name."
+    (interactive)
+    (switch-to-buffer (make-temp-name "scratch-")))
+
+  (defun hrs/split-window-below-and-switch ()
+    "Split the window horizontally, then switch to the new pane."
+    (interactive)
+    (split-window-below)
+    (other-window 1))
+
+  (defun hrs/split-window-right-and-switch ()
+    "Split the window vertically, then switch to the new pane."
+    (interactive)
+    (split-window-right)
+    (other-window 1))
+
+  (defun hrs/de-unicode ()
+    "Tidy up a buffer by replacing all special Unicode characters
+       (smart quotes, etc.) with their more sane cousins"
+    (interactive)
+    (let ((unicode-map '(("[\u2018\|\u2019\|\u201A\|\uFFFD]" . "'")
+                         ("[\u201c\|\u201d\|\u201e]" . "\"")
+                         ("\u2013" . "--")
+                         ("\u2014" . "---")
+                         ("\u2026" . "...")
+                         ("\u00A9" . "(c)")
+                         ("\u00AE" . "(r)")
+                         ("\u2122" . "TM")
+                         ("[\u02DC\|\u00A0]" . " "))))
+      (save-excursion
+        (loop for (key . value) in unicode-map
+              do
+              (goto-char (point-min))
+              (replace-regexp key value)))))
+
+  (defun hrs/beautify-json ()
+    "Pretty-print the JSON in the marked region. Currently shells
+       out to `jsonpp'--be sure that's installed!"
+    (interactive)
+    (save-excursion
+      (shell-command-on-region (mark) (point) "jsonpp" (buffer-name) t)))
+
+  (defun hrs/comment-or-uncomment-region-or-line ()
+    "Comments or uncomments the region or the current line if there's no active region."
+    (interactive)
+    (let (beg end)
+      (if (region-active-p)
+          (setq beg (region-beginning) end (region-end))
+        (setq beg (line-beginning-position) end (line-end-position)))
+      (comment-or-uncomment-region beg end)))
+
+  (defun hrs/unfill-paragraph ()
+    "Takes a multi-line paragraph and makes it into a single line of text."
+    (interactive)
+    (let ((fill-column (point-max)))
+      (fill-paragraph nil)))
+
+  (defun hrs/kill-current-buffer ()
+    "Kill the current buffer without prompting."
+    (interactive)
+    (kill-buffer (current-buffer)))
+
+  (defun hrs/visit-last-dired-file ()
+    "Open the last file in an open dired buffer."
+    (end-of-buffer)
+    (previous-line)
+    (dired-find-file))
+
+  (defun hrs/visit-last-migration ()
+    "Open the last file in 'db/migrate/'. Relies on projectile. Pretty sloppy."
+    (interactive)
+    (dired (expand-file-name "db/migrate" (projectile-project-root)))
+    (hrs/visit-last-dired-file)
+    (kill-buffer "migrate"))
+
+  (defun hrs/mac? ()
+    "Returns `t' if this is an Apple machine, nil otherwise."
+    (eq system-type 'darwin))
+
+  (defun hrs/add-auto-mode (mode &rest patterns)
+    "Add entries to `auto-mode-alist' to use `MODE' for all given file `PATTERNS'."
+    (dolist (pattern patterns)
+      (add-to-list 'auto-mode-alist (cons pattern mode))))
+
+  (defun hrs/find-file-as-sudo ()
+    (interactive)
+    (let ((file-name (buffer-file-name)))
+      (when file-name
+        (find-alternate-file (concat "/sudo::" file-name)))))
+
+  (defun hrs/insert-random-string (len)
+    "Insert a random alphanumeric string of length len."
+    (interactive)
+    (let ((mycharset "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstyvwxyz"))
+      (dotimes (i len)
+        (insert (elt mycharset (random (length mycharset)))))))
+
+  (defun hrs/generate-password ()
+    "Insert a good alphanumeric password of length 30."
+    (interactive)
+    (hrs/insert-random-string 30))
+#+END_SRC
+
+* Add to =load-path= & =path=
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/elisp/")
+
+  ;; Add to the LOAD PATH
+  (add-to-list 'load-path "~/.emacs.d/elisp")
+
+  ;; Add to the PATH, based on what we find
+  (if (file-accessible-directory-p "/opt/local/bin")
+    (add-to-list 'exec-path "/opt/local/bin"))
+  (if (file-accessible-directory-p "/usr/local/opt/coreutils/libexec/gnubin")
+    (add-to-list 'exec-path "/usr/local/opt/coreutils/libexec/gnubin"))
+  (if (file-accessible-directory-p "/usr/local/bin")
+    (add-to-list 'exec-path "/usr/local/bin"))
+  (add-to-list 'exec-path "~/bin")
+#+END_SRC
+* UI preferences
+** Set default font and configure font resizing
+
+The standard =text-scale-= functions just resize the text in the current buffer;
+I'd generally like to resize the text in /every/ buffer, and I usually want to
+change the size of the modeline, too (this is especially helpful when
+presenting). These functions and bindings let me resize everything all together!
+
+Note that this overrides the default font-related keybindings from
+=sensible-defaults=.
+
+#+BEGIN_SRC emacs-lisp
+  (setq hrs/default-font "Source Code Pro")
+  (setq hrs/default-font-size 13)
+  (setq hrs/current-font-size hrs/default-font-size)
+
+  (if (hrs/mac?)
+      (setq hrs/default-font-size 18))
+
+  (setq hrs/font-change-increment 1.1)
+
+  (defun hrs/set-font-size ()
+    "Set the font to `hrs/default-font' at `hrs/current-font-size'."
+    (set-frame-font
+     (concat hrs/default-font "-" (number-to-string hrs/current-font-size))))
+
+  (defun hrs/reset-font-size ()
+    "Change font size back to `hrs/default-font-size'."
+    (interactive)
+    (setq hrs/current-font-size hrs/default-font-size)
+    (hrs/set-font-size))
+
+  (defun hrs/increase-font-size ()
+    "Increase current font size by a factor of `hrs/font-change-increment'."
+    (interactive)
+    (setq hrs/current-font-size
+          (ceiling (* hrs/current-font-size hrs/font-change-increment)))
+    (hrs/set-font-size))
+
+  (defun hrs/decrease-font-size ()
+    "Decrease current font size by a factor of `hrs/font-change-increment', down to a minimum size of 1."
+    (interactive)
+    (setq hrs/current-font-size
+          (max 1
+               (floor (/ hrs/current-font-size hrs/font-change-increment))))
+    (hrs/set-font-size))
+
+  (define-key global-map (kbd "s-)") 'hrs/reset-font-size)
+  (define-key global-map (kbd "s-+") 'hrs/increase-font-size)
+  (define-key global-map (kbd "s-=") 'hrs/increase-font-size)
+  (define-key global-map (kbd "s-_") 'hrs/decrease-font-size)
+  (define-key global-map (kbd "s--") 'hrs/decrease-font-size)
+  (hrs/set-font-size)
+#+END_SRC
+
+** Set Frame Size
+
+I don't like full screen - a nice big window, centered, is ok by me.
+#+BEGIN_SRC emacs-lisp
+  (if (string= system-name "wintermute.na.corp.ipgnetwork.com")
+      (progn
+        ;; big font for big screen
+        (setq hrs/default-font-size 20)
+        (set-frame-size (selected-frame) 200 35)
+        (set-frame-position (selected-frame) 650 300))
+    (progn
+      (set-frame-size (selected-frame) 180 50)
+      (set-frame-position (selected-frame) 85 75)))
+#+END_SRC
+
+** Set window chrome
+
+#+BEGIN_SRC emacs-lisp
+  (when window-system
+    (scroll-bar-mode -1))
+  (tooltip-mode -1)
+  (tool-bar-mode -1)
+  (blink-cursor-mode -1)
+#+END_SRC
+
+** Use fancy lambdas
+
+Why not?
+
+#+BEGIN_SRC emacs-lisp
+  (global-prettify-symbols-mode t)
+#+END_SRC
+
+** Custom solarized-dark theme
+
+#+BEGIN_SRC emacs-lisp
+  (when window-system
+    (setq solarized-use-variable-pitch nil)
+    (setq solarized-height-plus-1 1.0)
+    (setq solarized-height-plus-2 1.0)
+    (setq solarized-height-plus-3 1.0)
+    (setq solarized-height-plus-4 1.0)
+    (setq solarized-high-contrast-mode-line t)
+    (load-theme 'solarized-dark t))
+#+END_SRC
+
+** Highlight the current line
+
+=global-hl-line-mode= softly highlights the background color of the line
+containing point. It makes it a bit easier to find point, and it's useful when
+pairing or presenting code.
+
+#+BEGIN_SRC emacs-lisp
+  (when window-system
+    (global-hl-line-mode))
+#+END_SRC
+
+** Hide certain modes from the modeline
+
+I'd rather have only a few necessary mode identifiers on my modeline. This
+either hides or "renames" a variety of major or minor modes using the =diminish=
+package.
+
+#+BEGIN_SRC emacs-lisp
+  (defmacro diminish-minor-mode (filename mode &optional abbrev)
+    `(eval-after-load (symbol-name ,filename)
+       '(diminish ,mode ,abbrev)))
+
+  (defmacro diminish-major-mode (mode-hook abbrev)
+    `(add-hook ,mode-hook
+               (lambda () (setq mode-name ,abbrev))))
+
+  (diminish-minor-mode 'abbrev 'abbrev-mode)
+  (diminish-minor-mode 'company 'company-mode)
+  (diminish-minor-mode 'eldoc 'eldoc-mode)
+  (diminish-minor-mode 'flycheck 'flycheck-mode)
+  (diminish-minor-mode 'flyspell 'flyspell-mode)
+  (diminish-minor-mode 'global-whitespace 'global-whitespace-mode)
+  (diminish-minor-mode 'projectile 'projectile-mode)
+  (diminish-minor-mode 'ruby-end 'ruby-end-mode)
+  (diminish-minor-mode 'subword 'subword-mode)
+  (diminish-minor-mode 'undo-tree 'undo-tree-mode)
+  (diminish-minor-mode 'yard-mode 'yard-mode)
+  (diminish-minor-mode 'yasnippet 'yas-minor-mode)
+  (diminish-minor-mode 'wrap-region 'wrap-region-mode)
+
+  (diminish-minor-mode 'paredit 'paredit-mode " π")
+
+  (diminish-major-mode 'emacs-lisp-mode-hook "el")
+  (diminish-major-mode 'haskell-mode-hook "λ=")
+  (diminish-major-mode 'lisp-interaction-mode-hook "λ")
+  (diminish-major-mode 'python-mode-hook "Py")
+#+END_SRC
+
+** Highlight uncommitted changes
+
+Use the =diff-hl= package to highlight changed-and-uncommitted lines when
+programming.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'diff-hl)
+
+  (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
+  (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode)
+#+END_SRC
+* Programming customizations
+I like shallow indentation, but tabs are displayed as 8 characters by default.
+This reduces that.
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default tab-width 2)
+  (defvaralias 'c-basic-offset 'tab-width)
+  (defvaralias 'cperl-indent-level 'tab-width)
+#+END_SRC
+
+Gradually expands the selection
+
+#+BEGIN_SRC emacs-lisp
+  (require 'expand-region)
+  (global-set-key (kbd "C-=") 'er/expand-region)
+#+END_SRC
+Don't show whitespace in diff, but show context
+
+#+BEGIN_SRC emacs-lisp
+  (setq vc-diff-switches '("-b" "-B" "-u"))
+#+END_SRC
+
+** Common coding hooks
+#+BEGIN_SRC emacs-lisp
+  (defun mpc/common-dev-hook ()
+    (setq tab-width 2)
+    (auto-fill-mode 1)
+    (mpc/find-tags)
+    (auto-make-header)
+    )
+#+END_SRC
+
+** Header2
+
+#+BEGIN_SRC emacs-lisp
+  (require 'header2)
+  ;; This is causing more trouble than it is worth, it seems.
+  ;;(autoload 'auto-update-file-header "header2")
+  ;;(add-hook 'write-file-hooks 'auto-update-file-header)
+  (autoload 'auto-make-header "header2")
+
+  (setq  make-header-hook '(
+                            ;;header-mode-line
+                            header-author
+                            header-maintainer
+                            ;;header-copyright
+                            header-creation-date
+                            ;;header-url
+                            ;;header-doc-url
+                            ;;header-keywords
+                            ;;header-blank
+                            header-code
+                            header-eof
+                            ))
+#+END_SRC
+
+** CSS and Sass
+
+Indent 2 spaces and use =rainbow-mode= to display color-related words in the
+color they describe.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'css-mode-hook 'mpc/common-dev-hook)
+  (add-hook 'css-mode-hook
+            (lambda ()
+              (rainbow-mode)
+              (setq css-indent-offset 2)))
+
+  (add-hook 'scss-mode-hook 'rainbow-mode)
+#+END_SRC
+
+Don't compile the current file every time I save.
+
+#+BEGIN_SRC emacs-lisp
+  (setq scss-compile-at-save nil)
+#+END_SRC
+
+** JavaScript and CoffeeScript
+
+Indent everything by 2 spaces.
+
+#+BEGIN_SRC emacs-lisp
+  (setq js-indent-level 2)
+
+  (hrs/add-auto-mode
+   'js2-mode
+   "\\.js\\(on\\)?$")
+
+  (add-hook 'coffee-mode-hook
+            (lambda ()
+              (yas-minor-mode 1)
+              (setq coffee-tab-width 2)))
+#+END_SRC
+
+** =sh=
+
+Indent with 2 spaces.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'sh-mode-hook
+            (lambda ()
+              (setq sh-basic-offset 2
+                    sh-indentation 2)))
+#+END_SRC
+
+** =web-mode=
+
+If I'm in =web-mode=, I'd like to:
+
+- Color color-related words with =rainbow-mode=.
+- Indent everything with 2 spaces.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'web-mode-hook
+            (lambda ()
+              (rainbow-mode)
+              (setq web-mode-markup-indent-offset 2)
+              (setq web-mode-css-indent-offset 2)
+              (setq web-mode-code-indent-offset 2)
+              (setq web-mode-indent-style 2)
+              (setq web-mode-style-padding 1)
+              (setq web-mode-script-padding 1)
+              (setq web-mode-block-padding 0)))
+#+END_SRC
+
+Use =web-mode= with regular HTML, and PHP.
+
+#+BEGIN_SRC emacs-lisp
+  (hrs/add-auto-mode
+   'web-mode
+   "\\.inc$"
+   "\\.html$"
+   "\\.php$"
+   "\\.rhtml$")
+#+END_SRC
+
+** Tags
+#+BEGIN_SRC emacs-lisp
+  ;; Deal with TAG files
+  (require 'etags-update)
+  (etags-update-mode)
+  (setq tags-revert-without-query 1)
+
+  (defun mpc/recursive-find-file (file &optional directory)
+    "Find the first FILE in DIRECTORY or its parents."
+    (setq directory (or directory (file-name-directory (buffer-file-name)) (pwd)))
+    (if (file-exists-p (expand-file-name file directory))
+        (expand-file-name file directory)
+      (unless (string= directory "/")
+        (mpc/recursive-find-file file (expand-file-name ".." directory)))))
+
+  (defun mpc/find-tags ()
+    "Set the TAGS file."
+    (set (make-variable-buffer-local 'tags-table-list) nil)
+    (set (make-variable-buffer-local 'tags-file-name)
+         (mpc/recursive-find-file "TAGS")))
+
+  ;;
+  ;; ctags
+  ;;
+  (setq path-to-ctags "/usr/local/bin/ctags")
+
+  (defun create-tags (dir-name)
+    "Create tags file."
+    (interactive "DDirectory: ")
+      (shell-command
+       (format "ctags -e -R %s" path-to-ctags (directory-file-name dir-name))))
+#+END_SRC
+* Terminal
+
+I use =multi-term= to manage my shell sessions.
+
+Use a login shell:
+
+#+BEGIN_SRC emacs-lisp
+  (setq multi-term-program-switches "--login")
+#+END_SRC
+
+I add a bunch of hooks to =term-mode=:
+
+- I'd like links (URLs, etc) to be clickable.
+- Yanking in =term-mode= doesn't quite work. The text from the paste appears in
+  the buffer but isn't sent to the shell process. This correctly binds =C-y= and
+  middle-click to yank the way we'd expect.
+
+#+BEGIN_SRC emacs-lisp
+  (defun hrs/term-paste (&optional string)
+    (interactive)
+    (process-send-string
+     (get-buffer-process (current-buffer))
+     (if string string (current-kill 0))))
+
+  (add-hook 'term-mode-hook
+            (lambda ()
+              (goto-address-mode)
+              (define-key term-raw-map (kbd "C-y") 'hrs/term-paste)
+              (define-key term-raw-map (kbd "<mouse-2>") 'hrs/term-paste)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (setq multi-term-dedicated-select-after-open-p t)
+  (global-set-key [f2] 'multi-term-dedicated-toggle)
+#+END_SRC
+
+And I like to start my Emacs in a terminal
+
+#+BEGIN_SRC emacs-lisp
+  (multi-term)
+#+END_SRC
+
+* Org-mode
+** Files and templates
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-files (quote ("~/Documents/org/idm.org" "~/Documents/org/journal.org" "~/Documents/org/work-notes.org")))
+  (setq org-capture-templates
+        '(("j" "Journal"    entry (file+datetree "~/Documents/org/journal.org")
+           "* %? %^G\n%T")
+          ("i" "IDM"        entry (file+datetree "~/Documents/org/idm.org")
+           "* %? %^G\n%T")
+          ("w" "Work Notes" entry (file+datetree "~/Documents/org/work-notes.org")
+           "* %? %^G\n%T")))
+#+END_SRC
+
+** Keybindings
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c l") 'org-store-link)
+  (global-set-key (kbd "C-c a") 'org-agenda)
+  (global-set-key (kbd "C-c b") 'org-iswitchb)
+  (global-set-key (kbd "C-c m") 'org-mac-message-insert-selected)
+  (global-set-key (kbd "C-c c") 'org-capture)
+#+END_SRC
+
+** Display preferences
+
+I like to see an outline of pretty bullets instead of a list of asterisks.  And I like the indentation
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (org-bullets-mode t)
+              (local-set-key (kbd "C-x C-e") 'org-export-dispatch)))
+
+  (setq org-hide-leading-stars t)
+  (setq org-startup-indented   t)
+#+END_SRC
+
+I like seeing a little downward-pointing arrow instead of the usual ellipsis
+(=...=) that org displays when there's stuff under a header.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-ellipsis "⤵")
+#+END_SRC
+
+Use syntax highlighting in source blocks while editing.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-fontify-natively t)
+#+END_SRC
+
+Make TAB act as if it were issued in a buffer of the language's major mode.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-tab-acts-natively t)
+#+END_SRC
+
+When editing a code snippet, use the current window rather than popping open a
+new one (which shows the same information).
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-window-setup 'current-window)
+#+END_SRC
+** Exporting
+
+Allow export to markdown.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'ox-md)
+#+END_SRC
+
+Allow =babel= to evaluate Emacs lisp & Ruby
+
+#+BEGIN_SRC emacs-lisp
+;  (org-babel-do-load-languages
+;   'org-babel-load-languages
+;   '((emacs-lisp . t)
+;     (ruby . t)))
+#+END_SRC
+
+Don't ask before evaluating code blocks.
+
+#+BEGIN_SRC emacs-lisp
+;  (setq org-confirm-babel-evaluate nil)
+#+END_SRC
+
+Translate regular ol' straight quotes to typographically correct curly quotes
+when exporting.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-export-with-smart-quotes t)
+#+END_SRC
+
+*** Exporting to HTML
+
+Don't include a footer with my contact and publishing information at the bottom
+of every exported HTML document.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-html-postamble nil)
+#+END_SRC
+* =dired=
+
+Load up the assorted =dired= extensions.
+
+#+BEGIN_SRC emacs-lisp
+  ;  (require 'dired-x)
+  (require 'dired+)
+  (require 'dired-open)
+  (add-hook 'dired-mode-hook
+              (lambda ()
+                (dired-hide-details-mode 0)))
+#+END_SRC
+
+Open media with the appropriate programs.
+
+#+BEGIN_SRC emacs-lisp
+  (setq dired-open-extensions
+        '(("pdf"  . "open")
+          ("docx" . "open")
+          ("xlsx" . "open")
+          ("pptx" . "open")
+          ("mkv"  . "open")
+          ("mp4"  . "open")
+          ("avi"  . "open")))
+#+END_SRC
+
+These are the switches that get passed to =ls= when =dired= gets a list of
+files. We're using:
+
+- =l=: Use the long listing format.
+- =h=: Use human-readable sizes.
+- =v=: Sort numbers naturally.
+- =A=: Almost all. Doesn't include "=.=" or "=..=".
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default dired-listing-switches "-lhvA")
+#+END_SRC
+
+Kill buffers of files/directories that are deleted in =dired=.
+
+#+BEGIN_SRC emacs-lisp
+  (setq dired-clean-up-buffers-too t)
+#+END_SRC
+
+Always copy directories recursively instead of asking every time.
+
+#+BEGIN_SRC emacs-lisp
+  (setq dired-recursive-copies 'always)
+#+END_SRC
+
+Ask before recursively /deleting/ a directory, though.
+
+#+BEGIN_SRC emacs-lisp
+  (setq dired-recursive-deletes 'top)
+#+END_SRC
+
+* =engine-mode=
+
+Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few useful engines.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'engine-mode)
+
+  (defengine amazon
+    "http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=%s"
+    :keybinding "a")
+
+  (defengine duckduckgo
+    "https://duckduckgo.com/?q=%s"
+    :keybinding "d")
+
+  (defengine github
+    "https://github.com/search?ref=simplesearch&q=%s"
+    :keybinding "g")
+
+  (defengine google
+    "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s")
+
+  (defengine google-images
+    "http://www.google.com/images?hl=en&source=hp&biw=1440&bih=795&gbv=2&aq=f&aqi=&aql=&oq=&q=%s")
+
+  (defengine google-maps
+    "http://maps.google.com/maps?q=%s"
+    :keybinding "m")
+
+  (defengine project-gutenberg
+    "http://www.gutenberg.org/ebooks/search.html/?format=html&default_prefix=all&sort_order=&query=%s")
+
+  (defengine rfcs
+    "http://pretty-rfc.herokuapp.com/search?q=%s")
+
+  (defengine stack-overflow
+    "https://stackoverflow.com/search?q=%s"
+    :keybinding "s")
+
+  (defengine twitter
+    "https://twitter.com/search?q=%s")
+
+  (defengine wikipedia
+    "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+    :keybinding "w")
+
+  (defengine wiktionary
+    "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s")
+
+  (defengine wolfram-alpha
+    "http://www.wolframalpha.com/input/?i=%s")
+
+  (defengine youtube
+    "http://www.youtube.com/results?aq=f&oq=&search_query=%s")
+
+  (engine-mode t)
+#+END_SRC
+* Some key bindings & other general editing settings
+** Key Bindings
+#+BEGIN_SRC emacs-lisp
+  (fset 'clear-screen
+        "\C-xh\C-w\C-m")
+  (fset 'kill-this-buf-max-other-buf
+        [?\C-x ?k return ?\C-x ?0])
+  (fset 'full-journal-date
+     [?\M-4 ?\M-0 ?- return ?\C-u ?\M-! ?d ?a ?t ?e ?  ?' ?+ ?% ?A ?, ?  ?% ?B ?  ?% ?d ?, ?  ?% ?Y ?  ?  ?% ?I ?: ?% ?M ?  ?% ?p ?' return ?\C-e return return])
+  (fset 'journal-timestamp
+     [?- ?- ?- ?- ?- ?- ?- ?- ?- ?- return ?\C-u ?\M-! ?d ?a ?t ?e ?  ?' ?+ ?% ?I ?: ?% ?M ?  ?% ?p ?' return ?\C-e return return])
+  (global-set-key [S-end]          'end-of-buffer)
+  (global-set-key [S-home]         'beginning-of-buffer)
+  (global-set-key [end]            'end-of-line)
+  (global-set-key [home]           'beginning-of-line)
+  (global-set-key [f3]             'full-journal-date)
+  (global-set-key [f4]             'journal-timestamp)
+  (global-set-key [f5]             'bh-compile)
+  (global-set-key [f6]             'next-error)
+  (global-set-key [f9]             'kill-this-buffer)
+  (global-set-key [f10]            'kill-this-buf-max-other-buf)
+  (global-set-key [f12]            'call-last-kbd-macro)
+  (global-set-key "\M- "           'just-one-space)
+
+  (when (require 'mac-print-mode nil t)
+    (mac-print-mode 1)
+    (global-set-key (kbd "M-p") 'mac-print-buffer))
+
+  ;; newline-and-indent EVERYWHERE
+  (define-key global-map (kbd "RET") 'newline-and-indent)
+#+END_SRC
+** Pause garbage collection when in minibuffer mode
+#+BEGIN_SRC emacs-lisp
+  ;
+  ;; http://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/
+  ;;
+  (defun my-minibuffer-setup-hook ()
+    (setq gc-cons-threshold most-positive-fixnum))
+
+  (defun my-minibuffer-exit-hook ()
+    (setq gc-cons-threshold 800000))
+
+  (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
+  (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
+#+END_SRC
+** Tramp
+#+BEGIN_SRC emacs-lisp
+  (require 'tramp)
+  (setq tramp-default-method "ssh"
+        global-font-lock-mode t
+        echo-keystrokes 0.1
+        font-lock-maximum-decoration t
+        inhibit-startup-message t
+        transient-mark-mode t
+        color-theme-is-global t
+        delete-by-moving-to-trash t
+        shift-select-mode nil
+        truncate-partial-width-windows nil
+        uniquify-buffer-name-style 'forward
+        xterm-mouse-mode t
+        mouse-drag-copy-region t
+        process-connection-type t
+        ispell-program-name "aspell"
+        ispell-extra-args '("--sug-mode=ultra")
+        pending-delete-mode t)
+#+END_SRC
+** My sensible defaults
+#+BEGIN_SRC emacs-lisp
+  (auto-compression-mode)
+  (column-number-mode t)
+  (display-time)
+  (put 'narrow-to-region 'disabled nil)
+  (mouse-wheel-mode t)
+  (electric-indent-mode 1)
+#+END_SRC
+
+** Always indent with spaces (or, Mark's Anal Tab Settings)
+
+Never use tabs. Tabs are the devil’s whitespace.
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default indent-tabs-mode nil)
+
+  (defun untabify-buffer ()
+    "For untabifying the entire buffer."
+    (interactive)
+    (untabify (point-min) (point-max)))
+
+  (add-hook
+   'find-file-hooks
+   'untabify-buffer)
+
+#+END_SRC
+
+** ALWAYS kill active processes when killing emacs
+
+#+BEGIN_SRC emacs-lisp
+  ;; Yoinked from
+  ;; http://timothypratley.blogspot.com/2015/07/seven-specialty-emacs-settings-with-big.html
+
+  (require 'cl)
+  (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
+             (flet ((process-list ())) ad-do-it))
+#+END_SRC
+
+** Editing with Markdown
+
+I'd like spell-checking running when editing Markdown.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'markdown-mode-hook 'flyspell-mode)
+#+END_SRC
+
+Associate =.md= files with Markdown.
+
+#+BEGIN_SRC emacs-lisp
+  (hrs/add-auto-mode 'markdown-mode "\\.md$")
+#+END_SRC
+
+** Linting prose
+
+I use [[http://proselint.com/][proselint]] to check my prose for common errors. This creates a flycheck
+checker that runs proselint in texty buffers and displays my errors.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'flycheck)
+
+  (flycheck-define-checker proselint
+    "A linter for prose."
+    :command ("proselint" source-inplace)
+    :error-patterns
+    ((warning line-start (file-name) ":" line ":" column ": "
+              (id (one-or-more (not (any " "))))
+              (message (one-or-more not-newline)
+                       (zero-or-more "\n" (any " ") (one-or-more not-newline)))
+              line-end))
+    :modes (text-mode markdown-mode gfm-mode org-mode))
+
+  (add-to-list 'flycheck-checkers 'proselint)
+#+END_SRC
+
+Use flycheck in the appropriate buffers:
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'markdown-mode-hook #'flycheck-mode)
+  (add-hook 'gfm-mode-hook #'flycheck-mode)
+  (add-hook 'text-mode-hook #'flycheck-mode)
+  (add-hook 'org-mode-hook #'flycheck-mode)
+#+END_SRC
+
+** Enable region case modification
+
+#+BEGIN_SRC emacs-lisp
+  (put 'downcase-region 'disabled nil)
+  (put 'upcase-region 'disabled nil)
+#+END_SRC
+
+** Switch windows when splitting
+
+When splitting a window, I invariably want to switch to the new window. This
+makes that automatic.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-x 2") 'hrs/split-window-below-and-switch)
+  (global-set-key (kbd "C-x 3") 'hrs/split-window-right-and-switch)
+#+END_SRC
+** Split horizontally for temporary buffers
+
+Horizonal splits are nicer for me, since I usually use a wide monitor. This is
+handy for handling temporary buffers (like compilation or test output).
+
+#+BEGIN_SRC emacs-lisp
+  (defun hrs/split-horizontally-for-temp-buffers ()
+    (when (one-window-p t)
+      (split-window-horizontally)))
+
+  (add-hook 'temp-buffer-window-setup-hook
+            'hrs/split-horizontally-for-temp-buffers)
+#+END_SRC

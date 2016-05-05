@@ -51,8 +51,8 @@ alias c='pygmentize -O style=monokai -f console256 -g'
 which grc > /dev/null 2>&1
 grc_not_found=$?
 if [ $grc_not_found -eq 0 ]; then
-  GRC=`which grc`     
-  if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then 
+  GRC=`which grc`
+  if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
       alias colourify="$GRC -es --colour=auto"
       alias configure='colourify ./configure'
       alias diff='colourify diff'
@@ -65,7 +65,7 @@ if [ $grc_not_found -eq 0 ]; then
       alias netstat='colourify netstat'
       alias ping='colourify ping'
       alias traceroute='colourify /usr/sbin/traceroute'
-  fi  
+  fi
 fi
 
 # Enable aliases to be sudo’ed
@@ -148,4 +148,3 @@ alias active='grep -v -e "^$" -e"^ *#"'
 
 # Show which commands you use the most
 alias freq='cut -f1 -d" " ~/.bash_history | sort | uniq -c | sort -nr | head -n 30'
-
