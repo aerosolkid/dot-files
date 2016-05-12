@@ -173,8 +173,6 @@ Define a big ol' bunch of handy utility functions.
 * Add to =load-path= & =path=
 
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "~/.emacs.d/elisp/")
-
   ;; Add to the LOAD PATH
   (add-to-list 'load-path "~/.emacs.d/elisp")
 
@@ -336,17 +334,6 @@ package.
   (diminish-major-mode 'python-mode-hook "Py")
 #+END_SRC
 
-** Highlight uncommitted changes
-
-Use the =diff-hl= package to highlight changed-and-uncommitted lines when
-programming.
-
-#+BEGIN_SRC emacs-lisp
-  (require 'diff-hl)
-
-  (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
-  (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode)
-#+END_SRC
 * Programming customizations
 I like shallow indentation, but tabs are displayed as 8 characters by default.
 This reduces that.
@@ -370,15 +357,21 @@ Don't show whitespace in diff, but show context
 #+END_SRC
 
 ** Common coding hooks
+Use the =diff-hl= package to highlight changed-and-uncommitted lines when
+programming.
+
 #+BEGIN_SRC emacs-lisp
+  (require 'diff-hl)
+
   (defun mpc/common-dev-hook ()
+    (diff-hl-mode 1)
     (setq tab-width 2)
     (auto-fill-mode 1)
     (mpc/find-tags)
     (auto-make-header)
     )
+  (add-hook 'vc-dir-mode-hook 'diff-hl-mode)
 #+END_SRC
-
 ** Header2
 
 #+BEGIN_SRC emacs-lisp
