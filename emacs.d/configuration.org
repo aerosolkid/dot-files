@@ -478,6 +478,11 @@ Use =web-mode= with regular HTML, and PHP.
    "\\.rhtml$")
 #+END_SRC
 
+** Dash
+#+BEGIN_SRC emacs-lisp
+  (global-set-key "\C-cd" 'dash-at-point)
+  (global-set-key "\C-ce" 'dash-at-point-with-docset)
+#+END_SRC
 ** Tags
 #+BEGIN_SRC emacs-lisp
   ;; Deal with TAG files
