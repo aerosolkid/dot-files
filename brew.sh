@@ -36,12 +36,13 @@ brew install vim --override-system-vi
 brew install homebrew/dupes/grep
 brew install homebrew/dupes/screen
 
+# Install cask (for emacs)
+brew install cask
 
 # Install other useful binaries
 brew install ack
 brew install aspell
 #install exiv2
-brew install ffmpeg --with-libvpx
 brew install git
 brew install gpg2
 brew install highlight
@@ -55,6 +56,12 @@ brew install pv
 brew install rename
 brew install tree
 brew install zopfli
+
+# Video tools
+brew install ffmpeg --with-libvpx
+brew install mkvtoolnix
+brew install mp4v2
+brew install mplayer
 
 # Remove outdated versions from the cellar
 brew cleanup

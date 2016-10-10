@@ -240,21 +240,6 @@ Note that this overrides the default font-related keybindings from
   (hrs/set-font-size)
 #+END_SRC
 
-** Set Frame Size
-
-I don't like full screen - a nice big window, centered, is ok by me.
-#+BEGIN_SRC emacs-lisp
-  (if (string= system-name "wintermute.na.corp.ipgnetwork.com")
-      (progn
-        ;; big font for big screen
-        (setq hrs/default-font-size 20)
-        (set-frame-size (selected-frame) 200 35)
-        (set-frame-position (selected-frame) 650 300))
-    (progn
-      (set-frame-size (selected-frame) 180 50)
-      (set-frame-position (selected-frame) 85 75)))
-#+END_SRC
-
 ** Set window chrome
 
 #+BEGIN_SRC emacs-lisp
@@ -332,6 +317,23 @@ package.
   (diminish-major-mode 'haskell-mode-hook "λ=")
   (diminish-major-mode 'lisp-interaction-mode-hook "λ")
   (diminish-major-mode 'python-mode-hook "Py")
+#+END_SRC
+
+** Set Frame Size
+
+I don't like full screen - a nice big window, centered, is ok by me.
+#+BEGIN_SRC emacs-lisp
+  (if (string= (system-name) "wintermute.na.corp.ipgnetwork.com")
+      (progn
+        ;; big font for big screen
+        (setq hrs/default-font-size 20)
+        (setq hrs/current-font-size hrs/default-font-size)
+        (hrs/set-font-size)
+        (set-frame-size (selected-frame) 200 55)
+        (set-frame-position (selected-frame) 400 250))
+    (progn
+      (set-frame-size (selected-frame) 180 50)
+      (set-frame-position (selected-frame) 85 75)))
 #+END_SRC
 
 * Programming customizations
@@ -580,6 +582,7 @@ I like to see an outline of pretty bullets instead of a list of asterisks.  And 
   (add-hook 'org-mode-hook
             (lambda ()
               (org-bullets-mode t)
+              (auto-fill-mode 1)
               (local-set-key (kbd "C-x C-e") 'org-export-dispatch)))
 
   (setq org-hide-leading-stars t)
@@ -856,17 +859,6 @@ Never use tabs. Tabs are the devil’s whitespace.
 
 #+END_SRC
 
-** ALWAYS kill active processes when killing emacs
-
-#+BEGIN_SRC emacs-lisp
-  ;; Yoinked from
-  ;; http://timothypratley.blogspot.com/2015/07/seven-specialty-emacs-settings-with-big.html
-
-  (require 'cl)
-  (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
-             (flet ((process-list ())) ad-do-it))
-#+END_SRC
-
 ** Editing with Markdown
 
 I'd like spell-checking running when editing Markdown.
@@ -898,7 +890,7 @@ checker that runs proselint in texty buffers and displays my errors.
               (message (one-or-more not-newline)
                        (zero-or-more "\n" (any " ") (one-or-more not-newline)))
               line-end))
-    :modes (text-mode markdown-mode gfm-mode org-mode))
+    :modes (text-mode markdown-mode gfm-mode))
 
   (add-to-list 'flycheck-checkers 'proselint)
 #+END_SRC
@@ -909,7 +901,6 @@ Use flycheck in the appropriate buffers:
   (add-hook 'markdown-mode-hook #'flycheck-mode)
   (add-hook 'gfm-mode-hook #'flycheck-mode)
   (add-hook 'text-mode-hook #'flycheck-mode)
-  (add-hook 'org-mode-hook #'flycheck-mode)
 #+END_SRC
 
 ** Enable region case modification

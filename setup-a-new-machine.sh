@@ -21,9 +21,9 @@ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/
 
 # https://github.com/rupa/z
 # z, oh how i love you
-cd ~/src
-git clone https://github.com/rupa/z.git
-chmod +x ~/src/z/z.sh
+#cd ~/src
+#git clone https://github.com/rupa/z.git
+#chmod +x ~/src/z/z.sh
 # also consider moving over your current .z file if possible. it's painful to rebuild :)
 
 # z binary is already referenced from .bash_profile
@@ -31,8 +31,8 @@ chmod +x ~/src/z/z.sh
 
 # https://github.com/thebitguru/play-button-itunes-patch
 # disable itunes opening on media keys
-cd ~/src
-git clone https://github.com/thebitguru/play-button-itunes-patch
+#cd ~/src
+#git clone https://github.com/thebitguru/play-button-itunes-patch
 
 
 # my magic photobooth symlink -> dropbox. I love it.

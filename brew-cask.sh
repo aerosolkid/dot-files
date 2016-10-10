@@ -16,6 +16,7 @@ brew cask install webpquicklook
 brew cask install suspicious-package
 
 # daily
+brew cask install adium
 #brew cask install alfred
 #brew cask install bartender
 brew cask install clamxav
@@ -53,15 +54,10 @@ brew cask install firefox
 #brew cask install torbrowser
 
 # less often
+brew cask install cyberduck
 #brew cask install disk-inventory-x
 #brew cask install screenflow4 # 4 specifically not 5.
 brew cask install private-eye
 brew cask install vlc
 #brew cask install keycastr  
-
-
-# Not on cask but I want regardless.
-
-# 3Hub
-# File Multi Tool 5
-# Phosphor
+brew cask install handbrakecli
