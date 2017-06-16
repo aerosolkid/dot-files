@@ -1,3 +1,4 @@
+.tramp_history
 *.old
 *.new
 *.ini
@@ -20,3 +21,5 @@ publish/*
 intermediate/*
 ssh
 TAGS
+*.min.js
+config-*.inc

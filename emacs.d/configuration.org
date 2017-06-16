@@ -558,11 +558,19 @@ And I like to start my Emacs in a terminal
 #+END_SRC
 
 * Org-mode
+** Modules / Setup
+#+BEGIN_SRC emacs-lisp
+  (load-library "org-mac-message")
+  (setq org-mac-mail-account "IPG")
+#+END_SRC
+
 ** Files and templates
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (quote ("~/Documents/org/idm.org" "~/Documents/org/journal.org" "~/Documents/org/work-notes.org")))
+  (setq org-agenda-files (quote ("~/Documents/org/todo.org" "~/Documents/org/idm.org" "~/Documents/org/journal.org" "~/Documents/org/work-notes.org")))
   (setq org-capture-templates
-        '(("j" "Journal"    entry (file+datetree "~/Documents/org/journal.org")
+        '(("t" "Todo"       entry (file+datetree "~/Documents/org/todo.org")
+           "* TODO \n%T\n\n%?")
+          ("j" "Journal"    entry (file+datetree "~/Documents/org/journal.org")
            "* %? %^G\n%T")
           ("i" "IDM"        entry (file+datetree "~/Documents/org/idm.org")
            "* %? %^G\n%T")
@@ -770,7 +778,7 @@ Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few usef
 
   (engine-mode t)
 #+END_SRC
-* Some key bindings & other general editing settings
+* Some key bindings / other general editing settings / miscellany
 ** Key Bindings
 #+BEGIN_SRC emacs-lisp
   (fset 'clear-screen
@@ -818,8 +826,17 @@ Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few usef
 ** Tramp
 #+BEGIN_SRC emacs-lisp
   (require 'tramp)
-  (setq tramp-default-method "ssh"
-        global-font-lock-mode t
+  (setq tramp-default-method "ssh")
+#+END_SRC
+** My sensible defaults
+#+BEGIN_SRC emacs-lisp
+  (auto-compression-mode)
+  (column-number-mode t)
+  (display-time)
+  (put 'narrow-to-region 'disabled nil)
+  (mouse-wheel-mode t)
+  (electric-indent-mode 1)
+  (setq global-font-lock-mode t
         echo-keystrokes 0.1
         font-lock-maximum-decoration t
         inhibit-startup-message t
@@ -831,19 +848,11 @@ Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few usef
         uniquify-buffer-name-style 'forward
         xterm-mouse-mode t
         mouse-drag-copy-region t
+        save-interprogram-paste-before-kill t
         process-connection-type t
         ispell-program-name "aspell"
         ispell-extra-args '("--sug-mode=ultra")
         pending-delete-mode t)
-#+END_SRC
-** My sensible defaults
-#+BEGIN_SRC emacs-lisp
-  (auto-compression-mode)
-  (column-number-mode t)
-  (display-time)
-  (put 'narrow-to-region 'disabled nil)
-  (mouse-wheel-mode t)
-  (electric-indent-mode 1)
 #+END_SRC
 
 ** Always indent with spaces (or, Mark's Anal Tab Settings)
@@ -930,10 +939,10 @@ Horizonal splits are nicer for me, since I usually use a wide monitor. This is
 handy for handling temporary buffers (like compilation or test output).
 
 #+BEGIN_SRC emacs-lisp
-  (defun hrs/split-horizontally-for-temp-buffers ()
-    (when (one-window-p t)
-      (split-window-horizontally)))
+ ; (defun hrs/split-horizontally-for-temp-buffers ()
+ ;   (when (one-window-p t)
+ ;     (split-window-horizontally)))
 
-  (add-hook 'temp-buffer-window-setup-hook
-            'hrs/split-horizontally-for-temp-buffers)
+ ; (add-hook 'temp-buffer-window-setup-hook
+ ;           'hrs/split-horizontally-for-temp-buffers)
 #+END_SRC
