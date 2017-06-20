@@ -562,6 +562,13 @@ And I like to start my Emacs in a terminal
 #+BEGIN_SRC emacs-lisp
   (load-library "org-mac-message")
   (setq org-mac-mail-account "IPG")
+
+  (setq org-deadline-warning-days 0)
+  (setq org-agenda-span (quote fortnight))
+  (setq org-agenda-sorting-strategy
+        (quote
+         ((agenda deadline-up priority-down)
+          (todo deadline-up category-keep))))
 #+END_SRC
 
 ** Files and templates
