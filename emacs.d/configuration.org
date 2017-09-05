@@ -282,43 +282,6 @@ pairing or presenting code.
     (global-hl-line-mode))
 #+END_SRC
 
-** Hide certain modes from the modeline
-
-I'd rather have only a few necessary mode identifiers on my modeline. This
-either hides or "renames" a variety of major or minor modes using the =diminish=
-package.
-
-#+BEGIN_SRC emacs-lisp
-  (defmacro diminish-minor-mode (filename mode &optional abbrev)
-    `(eval-after-load (symbol-name ,filename)
-       '(diminish ,mode ,abbrev)))
-
-  (defmacro diminish-major-mode (mode-hook abbrev)
-    `(add-hook ,mode-hook
-               (lambda () (setq mode-name ,abbrev))))
-
-  (diminish-minor-mode 'abbrev 'abbrev-mode)
-  (diminish-minor-mode 'company 'company-mode)
-  (diminish-minor-mode 'eldoc 'eldoc-mode)
-  (diminish-minor-mode 'flycheck 'flycheck-mode)
-  (diminish-minor-mode 'flyspell 'flyspell-mode)
-  (diminish-minor-mode 'global-whitespace 'global-whitespace-mode)
-  (diminish-minor-mode 'projectile 'projectile-mode)
-  (diminish-minor-mode 'ruby-end 'ruby-end-mode)
-  (diminish-minor-mode 'subword 'subword-mode)
-  (diminish-minor-mode 'undo-tree 'undo-tree-mode)
-  (diminish-minor-mode 'yard-mode 'yard-mode)
-  (diminish-minor-mode 'yasnippet 'yas-minor-mode)
-  (diminish-minor-mode 'wrap-region 'wrap-region-mode)
-
-  (diminish-minor-mode 'paredit 'paredit-mode " π")
-
-  (diminish-major-mode 'emacs-lisp-mode-hook "el")
-  (diminish-major-mode 'haskell-mode-hook "λ=")
-  (diminish-major-mode 'lisp-interaction-mode-hook "λ")
-  (diminish-major-mode 'python-mode-hook "Py")
-#+END_SRC
-
 ** Set Frame Size
 
 I don't like full screen - a nice big window, centered, is ok by me.
@@ -362,8 +325,13 @@ Don't show whitespace in diff, but show context
 Use the =diff-hl= package to highlight changed-and-uncommitted lines when
 programming.
 
+And also use whitespace mode to keep track of errant tabs, the scourge of source code.
+
 #+BEGIN_SRC emacs-lisp
   (require 'diff-hl)
+  (global-whitespace-mode)
+  (setq whitespace-style '(face tabs tab-mark))
+
 
   (defun mpc/common-dev-hook ()
     (diff-hl-mode 1)
@@ -861,16 +829,23 @@ Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few usef
 Never use tabs. Tabs are the devil’s whitespace.
 
 #+BEGIN_SRC emacs-lisp
-  (setq-default indent-tabs-mode nil)
+    (setq-default indent-tabs-mode nil)
 
-  (defun untabify-buffer ()
-    "For untabifying the entire buffer."
-    (interactive)
-    (untabify (point-min) (point-max)))
+    (defun untabify-buffer ()
+      "For untabifying the entire buffer."
+      (interactive)
+      (untabify (point-min) (point-max)))
 
-  (add-hook
-   'find-file-hooks
-   'untabify-buffer)
+  ;
+  ; So I was just untabifying any file I ever opened. This worked *most* of the
+  ; time, but not all of the time (Like when you open an image or pdf file.
+  ; After some though, I think it's probably better to leave files as they are
+  ; and then intentionally untabify them if I so desire
+  ; (I need to set the mode that lets me see any offending tabs easily however)
+  ;
+  ;  (add-hook
+  ;   'find-file-hooks
+  ;   'untabify-buffer)
 
 #+END_SRC
 
