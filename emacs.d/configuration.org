@@ -173,8 +173,6 @@ Define a big ol' bunch of handy utility functions.
 * Add to =load-path= & =path=
 
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "~/.emacs.d/elisp/")
-
   ;; Add to the LOAD PATH
   (add-to-list 'load-path "~/.emacs.d/elisp")
 
@@ -242,21 +240,6 @@ Note that this overrides the default font-related keybindings from
   (hrs/set-font-size)
 #+END_SRC
 
-** Set Frame Size
-
-I don't like full screen - a nice big window, centered, is ok by me.
-#+BEGIN_SRC emacs-lisp
-  (if (string= system-name "wintermute.na.corp.ipgnetwork.com")
-      (progn
-        ;; big font for big screen
-        (setq hrs/default-font-size 20)
-        (set-frame-size (selected-frame) 200 35)
-        (set-frame-position (selected-frame) 650 300))
-    (progn
-      (set-frame-size (selected-frame) 180 50)
-      (set-frame-position (selected-frame) 85 75)))
-#+END_SRC
-
 ** Set window chrome
 
 #+BEGIN_SRC emacs-lisp
@@ -299,54 +282,23 @@ pairing or presenting code.
     (global-hl-line-mode))
 #+END_SRC
 
-** Hide certain modes from the modeline
+** Set Frame Size
 
-I'd rather have only a few necessary mode identifiers on my modeline. This
-either hides or "renames" a variety of major or minor modes using the =diminish=
-package.
-
+I don't like full screen - a nice big window, centered, is ok by me.
 #+BEGIN_SRC emacs-lisp
-  (defmacro diminish-minor-mode (filename mode &optional abbrev)
-    `(eval-after-load (symbol-name ,filename)
-       '(diminish ,mode ,abbrev)))
-
-  (defmacro diminish-major-mode (mode-hook abbrev)
-    `(add-hook ,mode-hook
-               (lambda () (setq mode-name ,abbrev))))
-
-  (diminish-minor-mode 'abbrev 'abbrev-mode)
-  (diminish-minor-mode 'company 'company-mode)
-  (diminish-minor-mode 'eldoc 'eldoc-mode)
-  (diminish-minor-mode 'flycheck 'flycheck-mode)
-  (diminish-minor-mode 'flyspell 'flyspell-mode)
-  (diminish-minor-mode 'global-whitespace 'global-whitespace-mode)
-  (diminish-minor-mode 'projectile 'projectile-mode)
-  (diminish-minor-mode 'ruby-end 'ruby-end-mode)
-  (diminish-minor-mode 'subword 'subword-mode)
-  (diminish-minor-mode 'undo-tree 'undo-tree-mode)
-  (diminish-minor-mode 'yard-mode 'yard-mode)
-  (diminish-minor-mode 'yasnippet 'yas-minor-mode)
-  (diminish-minor-mode 'wrap-region 'wrap-region-mode)
-
-  (diminish-minor-mode 'paredit 'paredit-mode " π")
-
-  (diminish-major-mode 'emacs-lisp-mode-hook "el")
-  (diminish-major-mode 'haskell-mode-hook "λ=")
-  (diminish-major-mode 'lisp-interaction-mode-hook "λ")
-  (diminish-major-mode 'python-mode-hook "Py")
+  (if (string= (system-name) "wintermute.na.corp.ipgnetwork.com")
+      (progn
+        ;; big font for big screen
+        (setq hrs/default-font-size 20)
+        (setq hrs/current-font-size hrs/default-font-size)
+        (hrs/set-font-size)
+        (set-frame-size (selected-frame) 200 55)
+        (set-frame-position (selected-frame) 400 250))
+    (progn
+      (set-frame-size (selected-frame) 180 50)
+      (set-frame-position (selected-frame) 85 75)))
 #+END_SRC
 
-** Highlight uncommitted changes
-
-Use the =diff-hl= package to highlight changed-and-uncommitted lines when
-programming.
-
-#+BEGIN_SRC emacs-lisp
-  (require 'diff-hl)
-
-  (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
-  (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode)
-#+END_SRC
 * Programming customizations
 I like shallow indentation, but tabs are displayed as 8 characters by default.
 This reduces that.
@@ -370,15 +322,26 @@ Don't show whitespace in diff, but show context
 #+END_SRC
 
 ** Common coding hooks
+Use the =diff-hl= package to highlight changed-and-uncommitted lines when
+programming.
+
+And also use whitespace mode to keep track of errant tabs, the scourge of source code.
+
 #+BEGIN_SRC emacs-lisp
+  (require 'diff-hl)
+  (global-whitespace-mode)
+  (setq whitespace-style '(face tabs tab-mark))
+
+
   (defun mpc/common-dev-hook ()
+    (diff-hl-mode 1)
     (setq tab-width 2)
     (auto-fill-mode 1)
     (mpc/find-tags)
     (auto-make-header)
     )
+  (add-hook 'vc-dir-mode-hook 'diff-hl-mode)
 #+END_SRC
-
 ** Header2
 
 #+BEGIN_SRC emacs-lisp
@@ -483,6 +446,11 @@ Use =web-mode= with regular HTML, and PHP.
    "\\.rhtml$")
 #+END_SRC
 
+** Dash
+#+BEGIN_SRC emacs-lisp
+  (global-set-key "\C-cd" 'dash-at-point)
+  (global-set-key "\C-ce" 'dash-at-point-with-docset)
+#+END_SRC
 ** Tags
 #+BEGIN_SRC emacs-lisp
   ;; Deal with TAG files
@@ -558,11 +526,26 @@ And I like to start my Emacs in a terminal
 #+END_SRC
 
 * Org-mode
+** Modules / Setup
+#+BEGIN_SRC emacs-lisp
+  (load-library "org-mac-message")
+  (setq org-mac-mail-account "IPG")
+
+  (setq org-deadline-warning-days 0)
+  (setq org-agenda-span (quote fortnight))
+  (setq org-agenda-sorting-strategy
+        (quote
+         ((agenda deadline-up priority-down)
+          (todo deadline-up category-keep))))
+#+END_SRC
+
 ** Files and templates
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (quote ("~/Documents/org/idm.org" "~/Documents/org/journal.org" "~/Documents/org/work-notes.org")))
+  (setq org-agenda-files (quote ("~/Documents/org/todo.org" "~/Documents/org/idm.org" "~/Documents/org/journal.org" "~/Documents/org/work-notes.org")))
   (setq org-capture-templates
-        '(("j" "Journal"    entry (file+datetree "~/Documents/org/journal.org")
+        '(("t" "Todo"       entry (file+datetree "~/Documents/org/todo.org")
+           "* TODO \n%T\n\n%?")
+          ("j" "Journal"    entry (file+datetree "~/Documents/org/journal.org")
            "* %? %^G\n%T")
           ("i" "IDM"        entry (file+datetree "~/Documents/org/idm.org")
            "* %? %^G\n%T")
@@ -587,6 +570,7 @@ I like to see an outline of pretty bullets instead of a list of asterisks.  And 
   (add-hook 'org-mode-hook
             (lambda ()
               (org-bullets-mode t)
+              (auto-fill-mode 1)
               (local-set-key (kbd "C-x C-e") 'org-export-dispatch)))
 
   (setq org-hide-leading-stars t)
@@ -658,15 +642,21 @@ of every exported HTML document.
 #+END_SRC
 * =dired=
 
-Load up the assorted =dired= extensions.
+Yoinked from
+http://pragmaticemacs.com/emacs/case-insensitive-sorting-in-dired-on-os-x/
 
 #+BEGIN_SRC emacs-lisp
-  ;  (require 'dired-x)
-  (require 'dired+)
-  (require 'dired-open)
-  (add-hook 'dired-mode-hook
-              (lambda ()
-                (dired-hide-details-mode 0)))
+  ;; using ls-lisp with these settings gives case-insensitve
+  ;; sorting on OS X
+  (require 'ls-lisp)
+  (setq dired-listing-switches "-alhG")
+  (setq ls-lisp-use-insert-directory-program nil)
+  (setq ls-lisp-ignore-case t)
+  (setq ls-lisp-use-string-collate nil)
+  ;; customise the appearance of the listing
+  (setq ls-lisp-verbosity '(links uid))
+  (setq ls-lisp-format-time-list '("%b %e %H:%M" "%b %e  %Y"))
+  (setq ls-lisp-use-localized-time-format t)
 #+END_SRC
 
 Open media with the appropriate programs.
@@ -680,18 +670,6 @@ Open media with the appropriate programs.
           ("mkv"  . "open")
           ("mp4"  . "open")
           ("avi"  . "open")))
-#+END_SRC
-
-These are the switches that get passed to =ls= when =dired= gets a list of
-files. We're using:
-
-- =l=: Use the long listing format.
-- =h=: Use human-readable sizes.
-- =v=: Sort numbers naturally.
-- =A=: Almost all. Doesn't include "=.=" or "=..=".
-
-#+BEGIN_SRC emacs-lisp
-  (setq-default dired-listing-switches "-lhvA")
 #+END_SRC
 
 Kill buffers of files/directories that are deleted in =dired=.
@@ -769,7 +747,7 @@ Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few usef
 
   (engine-mode t)
 #+END_SRC
-* Some key bindings & other general editing settings
+* Some key bindings / other general editing settings / miscellany
 ** Key Bindings
 #+BEGIN_SRC emacs-lisp
   (fset 'clear-screen
@@ -817,8 +795,17 @@ Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few usef
 ** Tramp
 #+BEGIN_SRC emacs-lisp
   (require 'tramp)
-  (setq tramp-default-method "ssh"
-        global-font-lock-mode t
+  (setq tramp-default-method "ssh")
+#+END_SRC
+** My sensible defaults
+#+BEGIN_SRC emacs-lisp
+  (auto-compression-mode)
+  (column-number-mode t)
+  (display-time)
+  (put 'narrow-to-region 'disabled nil)
+  (mouse-wheel-mode t)
+  (electric-indent-mode 1)
+  (setq global-font-lock-mode t
         echo-keystrokes 0.1
         font-lock-maximum-decoration t
         inhibit-startup-message t
@@ -830,19 +817,11 @@ Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few usef
         uniquify-buffer-name-style 'forward
         xterm-mouse-mode t
         mouse-drag-copy-region t
+        save-interprogram-paste-before-kill t
         process-connection-type t
         ispell-program-name "aspell"
         ispell-extra-args '("--sug-mode=ultra")
         pending-delete-mode t)
-#+END_SRC
-** My sensible defaults
-#+BEGIN_SRC emacs-lisp
-  (auto-compression-mode)
-  (column-number-mode t)
-  (display-time)
-  (put 'narrow-to-region 'disabled nil)
-  (mouse-wheel-mode t)
-  (electric-indent-mode 1)
 #+END_SRC
 
 ** Always indent with spaces (or, Mark's Anal Tab Settings)
@@ -850,28 +829,24 @@ Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few usef
 Never use tabs. Tabs are the devil’s whitespace.
 
 #+BEGIN_SRC emacs-lisp
-  (setq-default indent-tabs-mode nil)
+    (setq-default indent-tabs-mode nil)
 
-  (defun untabify-buffer ()
-    "For untabifying the entire buffer."
-    (interactive)
-    (untabify (point-min) (point-max)))
+    (defun untabify-buffer ()
+      "For untabifying the entire buffer."
+      (interactive)
+      (untabify (point-min) (point-max)))
 
-  (add-hook
-   'find-file-hooks
-   'untabify-buffer)
+  ;
+  ; So I was just untabifying any file I ever opened. This worked *most* of the
+  ; time, but not all of the time (Like when you open an image or pdf file.
+  ; After some though, I think it's probably better to leave files as they are
+  ; and then intentionally untabify them if I so desire
+  ; (I need to set the mode that lets me see any offending tabs easily however)
+  ;
+  ;  (add-hook
+  ;   'find-file-hooks
+  ;   'untabify-buffer)
 
-#+END_SRC
-
-** ALWAYS kill active processes when killing emacs
-
-#+BEGIN_SRC emacs-lisp
-  ;; Yoinked from
-  ;; http://timothypratley.blogspot.com/2015/07/seven-specialty-emacs-settings-with-big.html
-
-  (require 'cl)
-  (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
-             (flet ((process-list ())) ad-do-it))
 #+END_SRC
 
 ** Editing with Markdown
@@ -905,7 +880,7 @@ checker that runs proselint in texty buffers and displays my errors.
               (message (one-or-more not-newline)
                        (zero-or-more "\n" (any " ") (one-or-more not-newline)))
               line-end))
-    :modes (text-mode markdown-mode gfm-mode org-mode))
+    :modes (text-mode markdown-mode gfm-mode))
 
   (add-to-list 'flycheck-checkers 'proselint)
 #+END_SRC
@@ -916,7 +891,6 @@ Use flycheck in the appropriate buffers:
   (add-hook 'markdown-mode-hook #'flycheck-mode)
   (add-hook 'gfm-mode-hook #'flycheck-mode)
   (add-hook 'text-mode-hook #'flycheck-mode)
-  (add-hook 'org-mode-hook #'flycheck-mode)
 #+END_SRC
 
 ** Enable region case modification
@@ -941,10 +915,10 @@ Horizonal splits are nicer for me, since I usually use a wide monitor. This is
 handy for handling temporary buffers (like compilation or test output).
 
 #+BEGIN_SRC emacs-lisp
-  (defun hrs/split-horizontally-for-temp-buffers ()
-    (when (one-window-p t)
-      (split-window-horizontally)))
+ ; (defun hrs/split-horizontally-for-temp-buffers ()
+ ;   (when (one-window-p t)
+ ;     (split-window-horizontally)))
 
-  (add-hook 'temp-buffer-window-setup-hook
-            'hrs/split-horizontally-for-temp-buffers)
+ ; (add-hook 'temp-buffer-window-setup-hook
+ ;           'hrs/split-horizontally-for-temp-buffers)
 #+END_SRC
