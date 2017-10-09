@@ -48,5 +48,8 @@ fi
 if [ -d /ipg/bin ]; then
   PATH=$PATH:/ipg/bin
 fi
+if [ -d /ipg/phabricator/arcanist/bin ]; then
+  PATH=$PATH:/ipg/phabricator/arcanist/bin
+fi
 
 export PATH
