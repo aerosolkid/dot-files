@@ -487,10 +487,11 @@ Use =web-mode= with regular HTML, and PHP.
 
 I use =multi-term= to manage my shell sessions.
 
-Use a login shell:
+Set up login shell:
 
 #+BEGIN_SRC emacs-lisp
   (setq multi-term-program-switches "--login")
+  (setq multi-term-program "/usr/local/bin/bash")
 #+END_SRC
 
 I add a bunch of hooks to =term-mode=:
@@ -514,8 +515,11 @@ I add a bunch of hooks to =term-mode=:
               (define-key term-raw-map (kbd "<mouse-2>") 'hrs/term-paste)))
 #+END_SRC
 
+I like f2 to toggle a dedicated multi-term
+
 #+BEGIN_SRC emacs-lisp
   (setq multi-term-dedicated-select-after-open-p t)
+  (setq multi-term-dedicated-window-height 10)
   (global-set-key [f2] 'multi-term-dedicated-toggle)
 #+END_SRC
 
