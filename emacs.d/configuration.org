@@ -638,8 +638,15 @@ Don't include a footer with my contact and publishing information at the bottom
 of every exported HTML document.
 
 #+BEGIN_SRC emacs-lisp
+  (provide 'html-mode-expansions)
+#+END_SRC
+
+
+
+#+BEGIN_SRC emacs-lisp
   (setq org-html-postamble nil)
 #+END_SRC
+
 * =dired=
 
 Yoinked from
@@ -695,6 +702,7 @@ https://truongtx.me/tmtxt-async-tasks.html
 https://truongtx.me/tmtxt-dired-async.html
 
 #+BEGIN_SRC emacs-lisp
+  (require 'dired)
   (require 'tmtxt-async-tasks)
   (require 'tmtxt-dired-async)
   (define-key dired-mode-map (kbd "C-c C-r") 'tda/rsync)
@@ -858,6 +866,14 @@ Never use tabs. Tabs are the devil’s whitespace.
   ;   'find-file-hooks
   ;   'untabify-buffer)
 
+#+END_SRC
+
+** Auto-revert- mode for logfiles
+
+Logfiles are for tailing.  This will do it in a buffer
+
+#+BEGIN_SRC emacs-lisp
+  (hrs/add-auto-mode 'auto-revert-mode "\\.log\\'")
 #+END_SRC
 
 ** Editing with Markdown
