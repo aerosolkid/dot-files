@@ -178,12 +178,13 @@ Define a big ol' bunch of handy utility functions.
 
   ;; Add to the PATH, based on what we find
   (if (file-accessible-directory-p "/opt/local/bin")
-    (add-to-list 'exec-path "/opt/local/bin"))
+      (add-to-list 'exec-path "/opt/local/bin"))
   (if (file-accessible-directory-p "/usr/local/opt/coreutils/libexec/gnubin")
-    (add-to-list 'exec-path "/usr/local/opt/coreutils/libexec/gnubin"))
+      (add-to-list 'exec-path "/usr/local/opt/coreutils/libexec/gnubin"))
   (if (file-accessible-directory-p "/usr/local/bin")
-    (add-to-list 'exec-path "/usr/local/bin"))
+      (add-to-list 'exec-path "/usr/local/bin"))
   (add-to-list 'exec-path "~/bin")
+
 #+END_SRC
 * UI preferences
 ** Set default font and configure font resizing
@@ -258,17 +259,15 @@ Why not?
   (global-prettify-symbols-mode t)
 #+END_SRC
 
-** Custom solarized-dark theme
+** Custom theme
 
 #+BEGIN_SRC emacs-lisp
-  (when window-system
-    (setq solarized-use-variable-pitch nil)
-    (setq solarized-height-plus-1 1.0)
-    (setq solarized-height-plus-2 1.0)
-    (setq solarized-height-plus-3 1.0)
-    (setq solarized-height-plus-4 1.0)
-    (setq solarized-high-contrast-mode-line t)
-    (load-theme 'solarized-dark t))
+  ;; Please set your themes directory to 'custom-theme-load-path
+  (add-to-list 'custom-theme-load-path
+               (file-name-as-directory "~/.emacs.d/elisp/replace-colorthemes"))
+  ;; load your favorite theme
+  (load-theme 'standard t t)
+  (enable-theme 'standard)
 #+END_SRC
 
 ** Highlight the current line
@@ -319,6 +318,11 @@ Don't show whitespace in diff, but show context
 
 #+BEGIN_SRC emacs-lisp
   (setq vc-diff-switches '("-b" "-B" "-u"))
+#+END_SRC
+
+** Magit
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-x g") 'magit-status)
 #+END_SRC
 
 ** Common coding hooks
