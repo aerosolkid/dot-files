@@ -148,3 +148,6 @@ alias active='grep -v -e "^$" -e"^ *#"'
 
 # Show which commands you use the most
 alias freq='cut -f1 -d" " ~/.bash_history | sort | uniq -c | sort -nr | head -n 30'
+
+# Look for apache
+alias psh='ps -ef | grep http | grep -v grep'
