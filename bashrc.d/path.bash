@@ -51,5 +51,4 @@ fi
 if [ -d /ipg/phabricator/arcanist/bin ]; then
   PATH=$PATH:/ipg/phabricator/arcanist/bin
 fi
-
 export PATH
