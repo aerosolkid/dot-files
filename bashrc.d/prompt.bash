@@ -8,7 +8,6 @@ else
   ITERM_TAB=']1;\h\007'
 fi
 
-SEP=$'\x2d'
 BULLET=$'\xe2\x96\xb8'
 
 if [ -f "/usr/local/opt/bash-git-prompt/share/gitprompt.sh" ]; then
