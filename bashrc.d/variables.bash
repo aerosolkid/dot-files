@@ -1,5 +1,9 @@
 export ALTERNATE_EDITOR=""
-export EDITOR="emacsclient --tty"
+if [ ${INSIDE_EMACS+x} ];then
+  export EDITOR=vi
+else
+  export EDITOR="emacsclient --tty"
+fi
 export EMAIL="mark@mpc.io"
 export GPG_TTY=$(tty)
 export HOMEBREW_NO_ANALYTICS=1
