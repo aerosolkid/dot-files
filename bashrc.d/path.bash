@@ -28,9 +28,18 @@ if [ -d /usr/local/opt/coreutils/libexec/gnubin ]; then
   PATH=$PATH:/usr/local/opt/coreutils/libexec/gnubin
 fi
 
-
 if [ -d /usr/local/mysql/bin ]; then
   PATH=$PATH:/usr/local/mysql/bin
+fi
+
+if [ -d ~/pear/bin ]; then
+  PATH=$PATH:~/pear/bin
+fi
+
+if [ -d /ipg/phabricator/arcanist/bin ]; then
+  PATH=$PATH:/ipg/phabricator/arcanist/bin
+elif [ -d ~/src/phacility/arcanist/bin ]; then
+  PATH=$PATH:~/src/phacility/arcanist/bin
 fi
 
 PATH=$PATH:/usr/bin
@@ -47,8 +56,5 @@ if [ -n "$ORACLE_HOME" ]; then
 fi
 if [ -d /ipg/bin ]; then
   PATH=$PATH:/ipg/bin
-fi
-if [ -d /ipg/phabricator/arcanist/bin ]; then
-  PATH=$PATH:/ipg/phabricator/arcanist/bin
 fi
 export PATH
