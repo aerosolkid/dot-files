@@ -183,6 +183,8 @@ Define a big ol' bunch of handy utility functions.
       (add-to-list 'exec-path "/usr/local/opt/coreutils/libexec/gnubin"))
   (if (file-accessible-directory-p "/usr/local/bin")
       (add-to-list 'exec-path "/usr/local/bin"))
+  (if (file-accessible-directory-p "/Users/mark.clements/pear/bin")
+      (add-to-list 'exec-path "/Users/mark.clements/pear/bin"))
   (add-to-list 'exec-path "~/bin")
 
 #+END_SRC
