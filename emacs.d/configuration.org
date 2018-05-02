@@ -491,7 +491,14 @@ Use =web-mode= with regular HTML, and PHP.
 #+END_SRC
 * Terminal
 
-I use =multi-term= to manage my shell sessions.
+I use =multi-term= to manage my shell sessions. Mostly.  I think I'm heading back
+to plain ol' shell-mode.
+
+To that end:
+#+BEGIN_SRC emacs-lisp
+  (setq shell-file-name "/bin/bash")
+#+END_SRC
+
 
 Set up login shell:
 
