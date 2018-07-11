@@ -558,7 +558,13 @@ And I like to start my Emacs in a terminal
 
 ** Files and templates
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (quote ("~/Documents/org/todo.org" "~/Documents/org/idm.org" "~/Documents/org/journal.org" "~/Documents/org/work-notes.org")))
+  (setq org-agenda-files (quote 
+                          ("~/Documents/org/todo.org" 
+                           "~/Documents/org/idm.org" 
+                           "~/Documents/org/journal.org" 
+                           "~/Documents/org/work-notes.org"
+                           "~/Documents/org/big-picture.org"
+                           )))
   (setq org-capture-templates
         '(("t" "Todo"       entry (file+datetree "~/Documents/org/todo.org")
            "* TODO \n%T\n\n%?")
