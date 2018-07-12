@@ -1,15 +1,5 @@
 #+TITLE: Emacs configuration
 
-* Use sensible-defaults.el
-
-Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for some basic settings.
-
-#+BEGIN_SRC emacs-lisp
-  (load-file "~/src/sensible-defaults.el/sensible-defaults.el")
-  (sensible-defaults/use-all-settings)
-  (sensible-defaults/use-all-keybindings)
-#+END_SRC
-
 * Set personal information
 
 #+BEGIN_SRC emacs-lisp
@@ -45,14 +35,47 @@ Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for so
   (setq-default save-place t)                   ;; activate it for all buffers
 #+END_SRC
 
-* Package management
-
-I use =cask= and =pallet= for managing packages.
+* Add to =load-path= & =path=
 
 #+BEGIN_SRC emacs-lisp
-  (require 'cask "/usr/local/share/emacs/site-lisp/cask/cask.el")
-  (cask-initialize)
-  (require 'pallet)
+  ;; Add to the LOAD PATH
+  (add-to-list 'load-path "~/.emacs.d/elisp")
+
+  ;; Add to the PATH, based on what we find
+  (if (file-accessible-directory-p "/opt/local/bin")
+      (add-to-list 'exec-path "/opt/local/bin"))
+  (if (file-accessible-directory-p "/usr/local/opt/coreutils/libexec/gnubin")
+      (add-to-list 'exec-path "/usr/local/opt/coreutils/libexec/gnubin"))
+  (if (file-accessible-directory-p "/usr/local/bin")
+      (add-to-list 'exec-path "/usr/local/bin"))
+  (if (file-accessible-directory-p "/Users/mark.clements/pear/bin")
+      (add-to-list 'exec-path "/Users/mark.clements/pear/bin"))
+  (add-to-list 'exec-path "~/bin")
+
+#+END_SRC
+
+* Use sensible-defaults.el
+
+Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for some basic settings.
+
+#+BEGIN_SRC emacs-lisp
+  (load-file "~/.emacs.d/elisp/sensible-defaults.el/sensible-defaults.el")
+  (sensible-defaults/use-all-settings)
+  (sensible-defaults/use-all-keybindings)
+#+END_SRC
+
+* Package management
+
+Back to use-package
+
+#+BEGIN_SRC emacs-lisp
+(require 'use-package)
+(use-package auto-package-update
+  :config
+    (setq auto-package-update-delete-old-versions t)
+    (setq auto-package-update-hide-results t)
+    (auto-package-update-maybe)
+  :ensure t)
 #+END_SRC
 
 * Utility functions
@@ -170,27 +193,9 @@ Define a big ol' bunch of handy utility functions.
     (hrs/insert-random-string 30))
 #+END_SRC
 
-* Add to =load-path= & =path=
-
-#+BEGIN_SRC emacs-lisp
-  ;; Add to the LOAD PATH
-  (add-to-list 'load-path "~/.emacs.d/elisp")
-
-  ;; Add to the PATH, based on what we find
-  (if (file-accessible-directory-p "/opt/local/bin")
-      (add-to-list 'exec-path "/opt/local/bin"))
-  (if (file-accessible-directory-p "/usr/local/opt/coreutils/libexec/gnubin")
-      (add-to-list 'exec-path "/usr/local/opt/coreutils/libexec/gnubin"))
-  (if (file-accessible-directory-p "/usr/local/bin")
-      (add-to-list 'exec-path "/usr/local/bin"))
-  (if (file-accessible-directory-p "/Users/mark.clements/pear/bin")
-      (add-to-list 'exec-path "/Users/mark.clements/pear/bin"))
-  (add-to-list 'exec-path "~/bin")
-
-#+END_SRC
 * UI preferences
-** Set default font and configure font resizing
 
+** Set default font and configure font resizing
 The standard =text-scale-= functions just resize the text in the current buffer;
 I'd generally like to resize the text in /every/ buffer, and I usually want to
 change the size of the modeline, too (this is especially helpful when
@@ -204,15 +209,19 @@ Note that this overrides the default font-related keybindings from
   (setq hrs/default-font-size 13)
   (setq hrs/current-font-size hrs/default-font-size)
 
-  (if (hrs/mac?)
-      (setq hrs/default-font-size 18))
-
   (setq hrs/font-change-increment 1.1)
 
+  (defun hrs/font-code ()
+    "Return a string representing the current font (like \"Inconsolata-14\")."
+    (concat hrs/default-font "-" (number-to-string hrs/current-font-size)))
+
   (defun hrs/set-font-size ()
-    "Set the font to `hrs/default-font' at `hrs/current-font-size'."
-    (set-frame-font
-     (concat hrs/default-font "-" (number-to-string hrs/current-font-size))))
+    "Set the font to `hrs/default-font' at `hrs/current-font-size'.
+  Set that for the current frame, and also make it the default for
+  other, future frames."
+    (let ((font-code (hrs/font-code)))
+      (add-to-list 'default-frame-alist (cons 'font font-code))
+      (set-frame-font font-code)))
 
   (defun hrs/reset-font-size ()
     "Change font size back to `hrs/default-font-size'."
@@ -242,7 +251,6 @@ Note that this overrides the default font-related keybindings from
   (define-key global-map (kbd "s--") 'hrs/decrease-font-size)
   (hrs/set-font-size)
 #+END_SRC
-
 ** Set window chrome
 
 #+BEGIN_SRC emacs-lisp
@@ -259,17 +267,6 @@ Why not?
 
 #+BEGIN_SRC emacs-lisp
   (global-prettify-symbols-mode t)
-#+END_SRC
-
-** Custom theme
-
-#+BEGIN_SRC emacs-lisp
-  ;; Please set your themes directory to 'custom-theme-load-path
-  (add-to-list 'custom-theme-load-path
-               (file-name-as-directory "~/.emacs.d/elisp/replace-colorthemes"))
-  ;; load your favorite theme
-  (load-theme 'standard t t)
-  (enable-theme 'standard)
 #+END_SRC
 
 ** Highlight the current line
@@ -301,6 +298,7 @@ I don't like full screen - a nice big window, centered, is ok by me.
 #+END_SRC
 
 * Programming customizations
+
 I like shallow indentation, but tabs are displayed as 8 characters by default.
 This reduces that.
 
@@ -313,9 +311,11 @@ This reduces that.
 Gradually expands the selection
 
 #+BEGIN_SRC emacs-lisp
-  (require 'expand-region)
-  (global-set-key (kbd "C-=") 'er/expand-region)
+  (use-package expand-region
+	  :bind ("C-=" . er/expand-region)
+    :ensure t)
 #+END_SRC
+
 Don't show whitespace in diff, but show context
 
 #+BEGIN_SRC emacs-lisp
@@ -323,18 +323,23 @@ Don't show whitespace in diff, but show context
 #+END_SRC
 
 ** Magit
+
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-x g") 'magit-status)
+  (use-package magit
+    :bind ("C-x g" . 'magit-status)
+		:ensure t)
 #+END_SRC
 
 ** Common coding hooks
+
 Use the =diff-hl= package to highlight changed-and-uncommitted lines when
 programming.
 
 And also use whitespace mode to keep track of errant tabs, the scourge of source code.
 
 #+BEGIN_SRC emacs-lisp
-  (require 'diff-hl)
+  (use-package diff-hl
+	  :ensure t)
   (global-whitespace-mode)
   (setq whitespace-style '(face tabs tab-mark))
 
@@ -351,7 +356,7 @@ And also use whitespace mode to keep track of errant tabs, the scourge of source
 ** Header2
 
 #+BEGIN_SRC emacs-lisp
-  (require 'header2)
+  (use-package header2)
   ;; This is causing more trouble than it is worth, it seems.
   ;;(autoload 'auto-update-file-header "header2")
   ;;(add-hook 'write-file-hooks 'auto-update-file-header)
@@ -453,10 +458,12 @@ Use =web-mode= with regular HTML, and PHP.
 #+END_SRC
 
 ** Dash
+
 #+BEGIN_SRC emacs-lisp
   (global-set-key "\C-cd" 'dash-at-point)
   (global-set-key "\C-ce" 'dash-at-point-with-docset)
 #+END_SRC
+
 ** Tags
 #+BEGIN_SRC emacs-lisp
   ;; Deal with TAG files
@@ -488,10 +495,10 @@ Use =web-mode= with regular HTML, and PHP.
     (interactive "DDirectory: ")
       (shell-command
        (format "ctags -e -R %s" path-to-ctags (directory-file-name dir-name))))
-#+END_SRC
+
 * Terminal
 
-I use =multi-term= to manage my shell sessions. Mostly.  I think I'm heading back
+I use =multi-term= to manage my shell sessions. Mostly. I think I'm heading back
 to plain ol' shell-mode.
 
 To that end:
@@ -499,10 +506,11 @@ To that end:
   (setq shell-file-name "/bin/bash")
 #+END_SRC
 
-
 Set up login shell:
 
 #+BEGIN_SRC emacs-lisp
+  (use-package multi-term
+    :ensure t)
   (setq multi-term-program-switches "--login")
   (setq multi-term-program "/usr/local/bin/bash")
 #+END_SRC
@@ -590,6 +598,8 @@ And I like to start my Emacs in a terminal
 I like to see an outline of pretty bullets instead of a list of asterisks.  And I like the indentation
 
 #+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t)
   (add-hook 'org-mode-hook
             (lambda ()
               (org-bullets-mode t)
@@ -625,6 +635,7 @@ new one (which shows the same information).
 #+BEGIN_SRC emacs-lisp
   (setq org-src-window-setup 'current-window)
 #+END_SRC
+
 ** Exporting
 
 Allow export to markdown.
@@ -732,64 +743,8 @@ https://truongtx.me/tmtxt-dired-async.html
   (define-key dired-mode-map (kbd "C-c C-l") 'tda/download-clipboard-link-to-current-dir)
 #+END_SRC
 
-* =engine-mode=
-
-Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few useful engines.
-
-#+BEGIN_SRC emacs-lisp
-  (require 'engine-mode)
-
-  (defengine amazon
-    "http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=%s"
-    :keybinding "a")
-
-  (defengine duckduckgo
-    "https://duckduckgo.com/?q=%s"
-    :keybinding "d")
-
-  (defengine github
-    "https://github.com/search?ref=simplesearch&q=%s"
-    :keybinding "g")
-
-  (defengine google
-    "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s")
-
-  (defengine google-images
-    "http://www.google.com/images?hl=en&source=hp&biw=1440&bih=795&gbv=2&aq=f&aqi=&aql=&oq=&q=%s")
-
-  (defengine google-maps
-    "http://maps.google.com/maps?q=%s"
-    :keybinding "m")
-
-  (defengine project-gutenberg
-    "http://www.gutenberg.org/ebooks/search.html/?format=html&default_prefix=all&sort_order=&query=%s")
-
-  (defengine rfcs
-    "http://pretty-rfc.herokuapp.com/search?q=%s")
-
-  (defengine stack-overflow
-    "https://stackoverflow.com/search?q=%s"
-    :keybinding "s")
-
-  (defengine twitter
-    "https://twitter.com/search?q=%s")
-
-  (defengine wikipedia
-    "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
-    :keybinding "w")
-
-  (defengine wiktionary
-    "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s")
-
-  (defengine wolfram-alpha
-    "http://www.wolframalpha.com/input/?i=%s")
-
-  (defengine youtube
-    "http://www.youtube.com/results?aq=f&oq=&search_query=%s")
-
-  (engine-mode t)
-#+END_SRC
 * Some key bindings / other general editing settings / miscellany
+
 ** Key Bindings
 #+BEGIN_SRC emacs-lisp
   (fset 'clear-screen
@@ -820,6 +775,7 @@ Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few usef
   ;; newline-and-indent EVERYWHERE
   (define-key global-map (kbd "RET") 'newline-and-indent)
 #+END_SRC
+
 ** Pause garbage collection when in minibuffer mode
 #+BEGIN_SRC emacs-lisp
   ;
@@ -958,17 +914,4 @@ makes that automatic.
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-x 2") 'hrs/split-window-below-and-switch)
   (global-set-key (kbd "C-x 3") 'hrs/split-window-right-and-switch)
-#+END_SRC
-** Split horizontally for temporary buffers
-
-Horizonal splits are nicer for me, since I usually use a wide monitor. This is
-handy for handling temporary buffers (like compilation or test output).
-
-#+BEGIN_SRC emacs-lisp
- ; (defun hrs/split-horizontally-for-temp-buffers ()
- ;   (when (one-window-p t)
- ;     (split-window-horizontally)))
-
- ; (add-hook 'temp-buffer-window-setup-hook
- ;           'hrs/split-horizontally-for-temp-buffers)
 #+END_SRC
