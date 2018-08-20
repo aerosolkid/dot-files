@@ -337,7 +337,7 @@ Don't show whitespace in diff, but show context
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :bind ("C-x g" . 'magit-status)
-		:ensure t)
+    :ensure t)
 #+END_SRC
 
 ** Tags
@@ -807,6 +807,7 @@ https://truongtx.me/tmtxt-dired-async.html
   (global-set-key [f12]            'call-last-kbd-macro)
   (global-set-key "\M- "           'just-one-space)
   (global-set-key (kbd "s-n")      'make-frame-command)
+  (global-set-key (kbd "s-v")      'yank)
 
 
   (when (require 'mac-print-mode nil t)
@@ -835,6 +836,7 @@ https://truongtx.me/tmtxt-dired-async.html
 #+BEGIN_SRC emacs-lisp
   (require 'tramp)
   (setq tramp-default-method "ssh")
+  (push "/usr/local/bin" tramp-remote-path)
 #+END_SRC
 ** My sensible defaults
 #+BEGIN_SRC emacs-lisp
