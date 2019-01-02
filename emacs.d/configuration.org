@@ -69,13 +69,12 @@ Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for so
 Back to use-package
 
 #+BEGIN_SRC emacs-lisp
-(require 'use-package)
-(use-package auto-package-update
-  :config
-    (setq auto-package-update-delete-old-versions t)
-    (setq auto-package-update-hide-results t)
-    (auto-package-update-maybe)
-  :ensure t)
+;;(use-package auto-package-update
+;;  :config
+;;    (setq auto-package-update-delete-old-versions t)
+;;    (setq auto-package-update-hide-results t)
+;;    (auto-package-update-maybe)
+;;  :ensure t)
 #+END_SRC
 
 * Utility functions
@@ -336,7 +335,7 @@ Don't show whitespace in diff, but show context
 
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-    :bind ("C-x g" . 'magit-status)
+    :bind ("C-x g" . magit-status)
     :ensure t)
 #+END_SRC
 
@@ -445,6 +444,8 @@ Indent everything by 2 spaces.
 #+BEGIN_SRC emacs-lisp
   (setq js-indent-level 2)
 
+  (use-package js2-mode
+    :ensure t)
   (hrs/add-auto-mode
    'js2-mode
    "\\.js\\(on\\)?$")
@@ -528,6 +529,8 @@ Set up =auto-complete= for =web-mode=
 ** Dash
 
 #+BEGIN_SRC emacs-lisp
+  (use-package dash-at-point
+    :ensure t)
   (global-set-key "\C-cd" 'dash-at-point)
   (global-set-key "\C-ce" 'dash-at-point-with-docset)
 #+END_SRC
@@ -591,8 +594,10 @@ And I like to start my Emacs in a terminal
 * Org-mode
 ** Modules / Setup
 #+BEGIN_SRC emacs-lisp
-  (load-library "org-mac-message")
-  (setq org-mac-mail-account "IPG")
+  (require 'org-mac-link)
+  (add-hook 'org-mode-hook (lambda ()
+                             (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)))
+
 
   (setq org-deadline-warning-days 0)
   (setq org-agenda-span (quote fortnight))
@@ -609,8 +614,8 @@ And I like to start my Emacs in a terminal
                            "~/Documents/org/idm.org" 
                            "~/Documents/org/journal.org" 
                            "~/Documents/org/work-notes.org"
-                           "~/Documents/org/big-picture.org"
-                           )))
+                             "~/Documents/org/big-picture.org"
+                             )))
   (setq org-capture-templates
         '(("t" "Todo"       entry (file+datetree "~/Documents/org/todo.org")
            "* TODO \n%T\n\n%?")
@@ -620,6 +625,19 @@ And I like to start my Emacs in a terminal
            "* %? %^G\n%T")
           ("w" "Work Notes" entry (file+datetree "~/Documents/org/work-notes.org")
            "* %? %^G\n%T")))
+
+  (setq org-todo-keywords
+        '((sequence "TODO" "HOLD" "|" "DONE")
+          (sequence "PROPOSED" "UPCOMMING" "|" "INPROCESS" "COMPLETE")
+          (sequence "|" "CANCELED")))
+  (setq org-todo-keyword-faces
+        '(("TODO"      . "red") 
+          ("HOLD"      . "magenta")
+          ("PROPOSED"  . "goldenrod2")
+          ("UPCOMMING" . "dark orange")
+          ("INPROCESS" . "blue")
+          ("COMPLETE"  . "dark green")
+          ("CANCELED"  . "gray50")))
 #+END_SRC
 
 ** Keybindings
@@ -786,36 +804,43 @@ https://truongtx.me/tmtxt-dired-async.html
 ** Key Bindings
 #+BEGIN_SRC emacs-lisp
   (fset 'clear-screen
-        "\C-xh\C-w\C-m")
+          "\C-xh\C-w\C-m")
   (fset 'kill-this-buf-max-other-buf
-        [?\C-x ?k return ?\C-x ?0])
+          [?\C-x ?k return ?\C-x ?0])
   (fset 'full-journal-date
-     [?\M-4 ?\M-0 ?- return ?\C-u ?\M-! ?d ?a ?t ?e ?  ?' ?+ ?% ?A ?, ?  ?% ?B ?  ?% ?d ?, ?  ?% ?Y ?  ?  ?% ?I ?: ?% ?M ?  ?% ?p ?' return ?\C-e return return])
+          [?\M-4 ?\M-0 ?- return ?\C-u ?\M-! ?d ?a ?t ?e ?  ?' ?+ ?% ?A ?, ?  ?% ?B ?  ?% ?d ?, ?  ?% ?Y ?  ?  ?% ?I ?: ?% ?M ?  ?% ?p ?' return ?\C-e return return])
   (fset 'journal-timestamp
-     [?- ?- ?- ?- ?- ?- ?- ?- ?- ?- return ?\C-u ?\M-! ?d ?a ?t ?e ?  ?' ?+ ?% ?I ?: ?% ?M ?  ?% ?p ?' return ?\C-e return return])
-  (global-set-key [S-end]          'end-of-buffer)
-  (global-set-key [S-home]         'beginning-of-buffer)
-  (global-set-key [end]            'end-of-line)
-  (global-set-key [home]           'beginning-of-line)
-  (global-set-key [f3]             'full-journal-date)
-  (global-set-key [f4]             'journal-timestamp)
-  (global-set-key [f5]             'bh-compile)
-  (global-set-key [f6]             'next-error)
-  (global-set-key [f8]             'clear-screen)
-  (global-set-key [f9]             'kill-this-buffer)
-  (global-set-key [f10]            'kill-this-buf-max-other-buf)
-  (global-set-key [f12]            'call-last-kbd-macro)
-  (global-set-key "\M- "           'just-one-space)
-  (global-set-key (kbd "s-n")      'make-frame-command)
-  (global-set-key (kbd "s-v")      'yank)
+          [?- ?- ?- ?- ?- ?- ?- ?- ?- ?- return ?\C-u ?\M-! ?d ?a ?t ?e ?  ?' ?+ ?% ?I ?: ?% ?M ?  ?% ?p ?' return ?\C-e return return])
+  (global-set-key [S-end]     'end-of-buffer)
+  (global-set-key [S-home]    'beginning-of-buffer)
+  (global-set-key [end]       'end-of-line)
+  (global-set-key [home]      'beginning-of-line)
+  (global-set-key [f3]        'full-journal-date)
+  (global-set-key [f4]        'journal-timestamp)
+  (global-set-key [f5]        'bh-compile)
+  (global-set-key [f6]        'next-error)
+  (global-set-key [f8]        'clear-screen)
+  (global-set-key [f9]        'kill-this-buffer)
+  (global-set-key [f10]       'kill-this-buf-max-other-buf)
+  (global-set-key [f12]       'call-last-kbd-macro)
+  (global-set-key "\M- "      'just-one-space)
+  (global-set-key (kbd "s-a") 'mark-whole-buffer)
+  (global-set-key (kbd "s-c") 'kill-ring-save)
+  (global-set-key (kbd "s-s") 'save-buffer)
+  (global-set-key (kbd "s-l") 'goto-line)
+  (global-set-key (kbd "s-n") 'make-frame-command)
+  (global-set-key (kbd "s-v") 'yank)
+  (global-set-key (kbd "s-w")
+                  (lambda () (interactive) (delete-window)))
+  (global-set-key (kbd "s-z") 'undo)
 
 
-  (when (require 'mac-print-mode nil t)
-    (mac-print-mode 1)
-    (global-set-key (kbd "M-p") 'mac-print-buffer))
+    (when (require 'mac-print-mode nil t)
+      (mac-print-mode 1)
+      (global-set-key (kbd "M-p") 'mac-print-buffer))
 
-  ;; newline-and-indent EVERYWHERE
-  (define-key global-map (kbd "RET") 'newline-and-indent)
+    ;; newline-and-indent EVERYWHERE
+    (define-key global-map (kbd "RET") 'newline-and-indent)
 #+END_SRC
 
 ** Pause garbage collection when in minibuffer mode
