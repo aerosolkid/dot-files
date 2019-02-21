@@ -10,7 +10,7 @@ export HOMEBREW_NO_ANALYTICS=1
 export LANG="en_US"
 export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
-export NAME="Mark P. Clements"
+export NAME="Mark Clements"
 export PROMPT_DIRTRIM=3
 
 # Omit duplicates and commands that begin with a space from history.
