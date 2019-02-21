@@ -6,6 +6,14 @@ if [ -d ~/Dropbox/bin ]; then
   PATH=$PATH:~/Dropbox/bin
 fi
 
+if [ -d /ipg/local/bin ]; then
+  PATH=$PATH:/ipg/local/bin
+fi
+
+if [ -d /ipg/bin ]; then
+  PATH=$PATH:/ipg/bin
+fi
+
 if [ -d /usr/local/bin ]; then
   PATH=$PATH:/usr/local/bin
 fi
@@ -54,7 +62,9 @@ fi
 if [ -n "$ORACLE_HOME" ]; then
   PATH=$PATH:$ORACLE_HOME/bin
 fi
-if [ -d /ipg/bin ]; then
-  PATH=$PATH:/ipg/bin
+
+if [ -d ~/.cask ]; then
+  PATH=~/.cask/bin:$PATH
 fi
+
 export PATH

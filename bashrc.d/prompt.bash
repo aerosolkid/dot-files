@@ -36,7 +36,7 @@ if [ -f "/usr/local/opt/bash-git-prompt/share/gitprompt.sh" ]; then
 elif [ -f ~/.git-prompt.sh ]; then
   source ~/.git-prompt.sh
   export GIT_PS1_SHOWDIRTYSTATE=yes
-  PROMPT_COMMAND='__git_ps1 "$ITERM_TAB\n\[[0;32m\]$BULLET\[[1;31m\] \u\[[00;30m\]@\[[00;30m\]\h  \[[1;36m\]\w\[[1;35m\]" "\[[0m\]\n\[[1;34m\]\\\$\[[0m\] "'
+  PROMPT_COMMAND='__git_ps1 "$ITERM_TAB\n\[[0;32m\]$BULLET\[[1;31m\] \u\[[0;31m\]@\[[0;31m\]\h  \[[1;36m\]\w\[[1;35m\]" "\[[0m\]\n\[[0;34m\]\\\$\[[0m\] "'
 fi
 
 #http://bashrcgenerator.com

@@ -50,7 +50,10 @@ Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for so
 I use =cask= and =pallet= for managing packages.
 
 #+BEGIN_SRC emacs-lisp
-  (require 'cask "/usr/local/share/emacs/site-lisp/cask/cask.el")
+  (if (file-readable-p "~/.cask/cask.el")
+    (require 'cask "~/.cask/cask.el")
+    (if (file-readable-p "/usr/local/share/emacs/site-lisp/cask/cask.el")
+          (require 'cask "/usr/local/share/emacs/site-lisp/cask/cask.el")))
   (cask-initialize)
   (require 'pallet)
 #+END_SRC
@@ -504,7 +507,7 @@ Set up login shell:
 
 #+BEGIN_SRC emacs-lisp
   (setq multi-term-program-switches "--login")
-  (setq multi-term-program "/usr/local/bin/bash")
+  (setq multi-term-program "/bin/bash")
 #+END_SRC
 
 I add a bunch of hooks to =term-mode=:
