@@ -290,17 +290,18 @@ pairing or presenting code.
 
 I don't like full screen - a nice big window, centered, is ok by me.
 #+BEGIN_SRC emacs-lisp
-  (if (string= (system-name) "wintermute.na.corp.ipgnetwork.com")
+  (when (display-graphic-p)
+    (if (string= (system-name) "wintermute.na.corp.ipgnetwork.com")
+        (progn
+          ;; big font for big screen
+          (setq hrs/default-font-size 20)
+          (setq hrs/current-font-size hrs/default-font-size)
+          (hrs/set-font-size)
+          (set-frame-size (selected-frame) 200 55)
+          (set-frame-position (selected-frame) 400 250))
       (progn
-        ;; big font for big screen
-        (setq hrs/default-font-size 20)
-        (setq hrs/current-font-size hrs/default-font-size)
-        (hrs/set-font-size)
-        (set-frame-size (selected-frame) 200 55)
-        (set-frame-position (selected-frame) 400 250))
-    (progn
-      (set-frame-size (selected-frame) 180 50)
-      (set-frame-position (selected-frame) 85 75)))
+        (set-frame-size (selected-frame) 180 50)
+        (set-frame-position (selected-frame) 85 75))))
 #+END_SRC
 
 * Programming customizations
@@ -598,6 +599,16 @@ And I like to start my Emacs in a terminal
   (multi-term)
 #+END_SRC
 
+Add hooks to use Magit's #with-editor# functionality within my terminals and
+shells
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'shell-mode-hook  'with-editor-export-editor)
+  (add-hook 'term-mode-hook   'with-editor-export-editor)
+  (add-hook 'eshell-mode-hook 'with-editor-export-editor)
+#+END_SRC
+
+
 * Org-mode
 ** Modules / Setup
 #+BEGIN_SRC emacs-lisp
@@ -616,10 +627,10 @@ And I like to start my Emacs in a terminal
 
 ** Files and templates
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (quote 
-                          ("~/Documents/org/todo.org" 
-                           "~/Documents/org/idm.org" 
-                           "~/Documents/org/journal.org" 
+  (setq org-agenda-files (quote
+                          ("~/Documents/org/todo.org"
+                           "~/Documents/org/idm.org"
+                           "~/Documents/org/journal.org"
                            "~/Documents/org/work-notes.org"
                              "~/Documents/org/big-picture.org"
                              )))
@@ -638,7 +649,7 @@ And I like to start my Emacs in a terminal
           (sequence "PROPOSED" "UPCOMMING" "|" "INPROCESS" "COMPLETE")
           (sequence "|" "CANCELED")))
   (setq org-todo-keyword-faces
-        '(("TODO"      . "red") 
+        '(("TODO"      . "red")
           ("HOLD"      . "magenta")
           ("PROPOSED"  . "goldenrod2")
           ("UPCOMMING" . "dark orange")
