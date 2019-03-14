@@ -290,22 +290,11 @@ pairing or presenting code.
 
 I don't like full screen - a nice big window, centered, is ok by me.
 #+BEGIN_SRC emacs-lisp
-    (when (display-graphic-p)
-      (if (string= (system-name) "wintermute.na.corp.ipgnetwork.com")
-          (progn
-            ;; big font for big screen
-            (setq hrs/default-font-size 20)
-            (setq hrs/current-font-size hrs/default-font-size)
-            (hrs/set-font-size)
-            (set-frame-size (selected-frame) 200 55)
-            (set-frame-position (selected-frame) 400 250))
-        ))
-
   (defun default-font-width () 
     "Return the width in pixels of a character in the current
-  window's default font.  More precisely, this returns the
-  width of the letter ‘m’.  If the font is mono-spaced, this
-  will also be the width of all other printable characters."
+    window's default font.  More precisely, this returns the
+    width of the letter ‘m’.  If the font is mono-spaced, this
+    will also be the width of all other printable characters."
     (let ((window (selected-window))
           (remapping face-remapping-alist))
       (with-temp-buffer
@@ -338,8 +327,19 @@ I don't like full screen - a nice big window, centered, is ok by me.
     (progn
       (set-frame-size (selected-frame) frame-w-in-chars frame-h-in-chars)
       (set-frame-position (selected-frame) (/ (* (- disp-w-in-chars frame-w-in-chars) char-w) 2) (/ (* (- disp-h-in-chars frame-h-in-chars) char-h) 2) )))
+  (when (display-graphic-p)
+    (if (string= (system-name) "wintermute.na.corp.ipgnetwork.com")
+        (progn
+          ;; big font for big screen
+          (setq hrs/default-font-size 20)
+          (setq hrs/current-font-size hrs/default-font-size)
+          (hrs/set-font-size)
+          (set-frame-size (selected-frame) 200 55)
+          (set-frame-position (selected-frame) 400 250))
+      )
+    (mpc-center-window))
 
-(mpc-center-window)
+
 #+END_SRC
 
 * Programming customizations
