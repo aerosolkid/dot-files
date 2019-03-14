@@ -290,18 +290,56 @@ pairing or presenting code.
 
 I don't like full screen - a nice big window, centered, is ok by me.
 #+BEGIN_SRC emacs-lisp
-  (when (display-graphic-p)
-    (if (string= (system-name) "wintermute.na.corp.ipgnetwork.com")
-        (progn
-          ;; big font for big screen
-          (setq hrs/default-font-size 20)
-          (setq hrs/current-font-size hrs/default-font-size)
-          (hrs/set-font-size)
-          (set-frame-size (selected-frame) 200 55)
-          (set-frame-position (selected-frame) 400 250))
-      (progn
-        (set-frame-size (selected-frame) 180 50)
-        (set-frame-position (selected-frame) 85 75))))
+    (when (display-graphic-p)
+      (if (string= (system-name) "wintermute.na.corp.ipgnetwork.com")
+          (progn
+            ;; big font for big screen
+            (setq hrs/default-font-size 20)
+            (setq hrs/current-font-size hrs/default-font-size)
+            (hrs/set-font-size)
+            (set-frame-size (selected-frame) 200 55)
+            (set-frame-position (selected-frame) 400 250))
+        ))
+
+  (defun default-font-width () 
+    "Return the width in pixels of a character in the current
+  window's default font.  More precisely, this returns the
+  width of the letter ‘m’.  If the font is mono-spaced, this
+  will also be the width of all other printable characters."
+    (let ((window (selected-window))
+          (remapping face-remapping-alist))
+      (with-temp-buffer
+        (make-local-variable 'face-remapping-alist)
+        (setq face-remapping-alist remapping)
+        (set-window-buffer window (current-buffer))
+        (insert "m")
+        (aref (aref (font-get-glyphs (font-at 1) 1 2) 0) 4))))
+  (defun mpc-center-window ()
+    "Resizes the current frame to be a large, centered window with a little margin all around"
+    (make-local-variable 'disp-xy)
+    (make-local-variable 'char-w)
+    (make-local-variable 'char-h)
+    (make-local-variable 'disp-h)
+    (make-local-variable 'disp-w)
+    (make-local-variable 'disp-h-in-chars)
+    (make-local-variable 'disp-w-in-chars)
+    (make-local-variable 'frame-h-in-chars)
+    (make-local-variable 'frame-w-in-chars)
+    (setq disp-xy (cdr (cdr (cdr (car (cdr (car (display-monitor-attributes-list))))))))
+    (setq disp-xy (cdr (cdr (cdr (car (cdr (car (display-monitor-attributes-list))))))))
+    (setq disp-w (car disp-xy))
+    (setq disp-h (car (cdr disp-xy)))
+    (setq char-w  (default-font-width))
+    (setq char-h (line-pixel-height) )
+    (setq disp-w-in-chars (/ disp-w  char-w))
+    (setq disp-h-in-chars (/ disp-h char-h))
+    (setq frame-h-in-chars (floor (* disp-h-in-chars .7)))
+    (setq frame-w-in-chars (floor (* disp-w-in-chars .75)))
+    (progn
+      (set-frame-size (selected-frame) frame-w-in-chars frame-h-in-chars)
+      (set-frame-position (selected-frame) (/ (* (- disp-w-in-chars frame-w-in-chars) char-w) 2) (/ (* (- disp-h-in-chars frame-h-in-chars) char-h) 2) )))
+
+(mpc-center-window)
 #+END_SRC
 
 * Programming customizations
