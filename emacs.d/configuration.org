@@ -583,52 +583,13 @@ Set up =auto-complete= for =web-mode=
 
 * Terminal
 
-I use =multi-term= to manage my shell sessions. Mostly. I think I'm heading back
-to plain ol' shell-mode.
+I've gone back to plain ol' shell-mode.
 
 To that end:
 #+BEGIN_SRC emacs-lisp
   (if (file-exists-p "/usr/local/bin/bash")
       (setq shell-file-name "/usr/local/bin/bash")
       (setq shell-file-name "/bin/bash"))
-#+END_SRC
-
-Set up login shell:
-
-#+BEGIN_SRC emacs-lisp
-  (use-package multi-term
-    :ensure t)
-  (setq multi-term-program-switches "--login")
-  (setq multi-term-program "/bin/bash")
-#+END_SRC
-
-I add a bunch of hooks to =term-mode=:
-
-- I'd like links (URLs, etc) to be clickable.
-- Yanking in =term-mode= doesn't quite work. The text from the paste appears in
-  the buffer but isn't sent to the shell process. This correctly binds =C-y= and
-  middle-click to yank the way we'd expect.
-
-#+BEGIN_SRC emacs-lisp
-  (defun hrs/term-paste (&optional string)
-    (interactive)
-    (process-send-string
-     (get-buffer-process (current-buffer))
-     (if string string (current-kill 0))))
-
-  (add-hook 'term-mode-hook
-            (lambda ()
-              (goto-address-mode)
-              (define-key term-raw-map (kbd "C-y") 'hrs/term-paste)
-              (define-key term-raw-map (kbd "<mouse-2>") 'hrs/term-paste)))
-#+END_SRC
-
-I like f2 to toggle a dedicated multi-term
-
-#+BEGIN_SRC emacs-lisp
-  (setq multi-term-dedicated-select-after-open-p t)
-  (setq multi-term-dedicated-window-height 10)
-  (global-set-key [f2] 'multi-term-dedicated-toggle)
 #+END_SRC
 
 Add hooks to use Magit's #with-editor# functionality within my terminals and
@@ -641,7 +602,7 @@ shells
 And I like to start my Emacs in a terminal
 
 #+BEGIN_SRC emacs-lisp
-  (multi-term)
+  (shell)
 #+END_SRC
 
 * Org-mode
