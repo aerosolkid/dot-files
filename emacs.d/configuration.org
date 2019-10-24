@@ -642,7 +642,7 @@ And I like to start my Emacs in a terminal
 
   (setq org-todo-keywords
         '((sequence "TODO" "HOLD" "|" "DONE")
-          (sequence "PROPOSED" "UPCOMMING" "|" "INPROCESS" "COMPLETE")
+          (sequence "PROPOSED" "UPCOMING" "|" "INPROCESS" "COMPLETE")
           (sequence "|" "CANCELED")))
   (setq org-todo-keyword-faces
         '(("TODO"      . "red")

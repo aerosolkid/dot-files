@@ -27,7 +27,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (dash-at-point js2-mode js2 auto-complete php-mode org multi-term expand-region use-package)))
+    (json-mode dash-at-point js2-mode js2 auto-complete php-mode org multi-term expand-region use-package)))
  '(tramp-histfile-override nil nil (tramp)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

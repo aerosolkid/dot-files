@@ -45,6 +45,7 @@
 (depends-on "ido-vertical-mode")
 (depends-on "inf-ruby")
 (depends-on "inflections")
+(depends-on "jason-mode")
 (depends-on "js2-mode")
 (depends-on "jump")
 (depends-on "less-css-mode")
