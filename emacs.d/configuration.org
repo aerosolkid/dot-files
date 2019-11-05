@@ -66,8 +66,6 @@ Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for so
 
 * Package management
 
-Back to use-package
-
 #+BEGIN_SRC emacs-lisp
   (if (file-readable-p "~/.cask/cask.el")
     (require 'cask "~/.cask/cask.el")
@@ -200,8 +198,7 @@ Define a big ol' bunch of handy utility functions.
 #+END_SRC
 
 * UI preferences
-
-** Set default font and configure font resizing
+** Set default fonts and configure font resizing
 The standard =text-scale-= functions just resize the text in the current buffer;
 I'd generally like to resize the text in /every/ buffer, and I usually want to
 change the size of the modeline, too (this is especially helpful when
@@ -211,7 +208,7 @@ Note that this overrides the default font-related keybindings from
 =sensible-defaults=.
 
 #+BEGIN_SRC emacs-lisp
-  (setq hrs/default-font "Source Code Pro")
+  (setq hrs/default-font "Input Mono")
   (setq hrs/default-font-size 13)
   (setq hrs/current-font-size hrs/default-font-size)
 
@@ -328,15 +325,6 @@ I don't like full screen - a nice big window, centered, is ok by me.
       (set-frame-size (selected-frame) frame-w-in-chars frame-h-in-chars)
       (set-frame-position (selected-frame) (/ (* (- disp-w-in-chars frame-w-in-chars) char-w) 2) (/ (* (- disp-h-in-chars frame-h-in-chars) char-h) 2) )))
   (when (display-graphic-p)
-    (if (string= (system-name) "wintermute.na.corp.ipgnetwork.com")
-        (progn
-          ;; big font for big screen
-          (setq hrs/default-font-size 20)
-          (setq hrs/current-font-size hrs/default-font-size)
-          (hrs/set-font-size)
-          (set-frame-size (selected-frame) 200 55)
-          (set-frame-position (selected-frame) 400 250))
-      )
     (mpc-center-window))
 
 
@@ -367,7 +355,7 @@ Gradually expands the selection
 
 #+BEGIN_SRC emacs-lisp
   (use-package expand-region
-	  :bind ("C-=" . er/expand-region)
+    :bind ("C-=" . er/expand-region)
     :ensure t)
 #+END_SRC
 
@@ -426,7 +414,7 @@ And also use whitespace mode to keep track of errant tabs, the scourge of source
 
 #+BEGIN_SRC emacs-lisp
   (use-package diff-hl
-	  :ensure t)
+    :ensure t)
   (global-whitespace-mode)
   (setq whitespace-style '(face tabs tab-mark))
 
@@ -606,6 +594,10 @@ And I like to start my Emacs in a terminal
 #+END_SRC
 
 * Org-mode
+
+Some things below are yoinked from 
+https://christiantietze.de/posts/2019/03/sync-emacs-org-files
+
 ** Modules / Setup
 #+BEGIN_SRC emacs-lisp
   (require 'org-mac-link)
@@ -619,17 +611,20 @@ And I like to start my Emacs in a terminal
         (quote
          ((agenda deadline-up priority-down)
           (todo deadline-up category-keep))))
+
+  (add-hook 'auto-save-hook 'org-save-all-org-buffers)
 #+END_SRC
 
 ** Files and templates
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (quote
-                          ("~/Documents/org/todo.org"
-                           "~/Documents/org/idm.org"
-                           "~/Documents/org/journal.org"
-                           "~/Documents/org/work-notes.org"
-                             "~/Documents/org/big-picture.org"
-                             )))
+     ;; (setq org-agenda-files (quote
+     ;;                         ("~/Documents/org/todo.org"
+     ;;                          "~/Documents/org/idm.org"
+     ;;                          "~/Documents/org/journal.org"
+     ;;                          "~/Documents/org/work-notes.org"
+     ;;                          "~/Documents/org/big-picture.org"
+     ;;                          )))
+  (setq org-agenda-files (quote ("~/Pending/org/gtd")))
   (setq org-capture-templates
         '(("t" "Todo"       entry (file+datetree "~/Documents/org/todo.org")
            "* TODO \n%T\n\n%?")
