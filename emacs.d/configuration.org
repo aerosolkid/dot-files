@@ -600,41 +600,59 @@ https://christiantietze.de/posts/2019/03/sync-emacs-org-files
 
 ** Modules / Setup
 #+BEGIN_SRC emacs-lisp
+  (require 'org-super-agenda)
   (require 'org-mac-link)
   (add-hook 'org-mode-hook (lambda ()
                              (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)))
 
 
-  (setq org-deadline-warning-days 0)
+  ;;(setq org-deadline-warning-days 0)
   (setq org-agenda-span (quote fortnight))
-  (setq org-agenda-sorting-strategy
-        (quote
-         ((agenda deadline-up priority-down)
-          (todo deadline-up category-keep))))
+  ;;(setq org-agenda-sorting-strategy
+  ;;      (quote
+  ;;       ((agenda deadline-up priority-down)
+  ;;        (todo deadline-up category-keep))))
 
   (add-hook 'auto-save-hook 'org-save-all-org-buffers)
+  (org-super-agenda-mode)
+
+  (setq org-super-agenda-groups
+        '((:name "Critical"
+                 :and
+                 (:todo "TODO"
+                        :priority "A"))
+          (:name "Important"
+                 :and
+                 (:todo "TODO"
+                        :priority "B"))
+          (:name "Not as Important"
+                 :and
+                 (:todo "TODO"
+                        :priority "C"))
+          (:name "¯\\_(ツ)_/¯"
+                 :todo "TODO")
+          ))
+
 #+END_SRC
 
 ** Files and templates
 #+BEGIN_SRC emacs-lisp
-     ;; (setq org-agenda-files (quote
-     ;;                         ("~/Documents/org/todo.org"
-     ;;                          "~/Documents/org/idm.org"
-     ;;                          "~/Documents/org/journal.org"
-     ;;                          "~/Documents/org/work-notes.org"
-     ;;                          "~/Documents/org/big-picture.org"
-     ;;                          )))
-  (setq org-agenda-files (quote ("~/Pending/org/gtd")))
+  ;; (setq org-agenda-files (quote
+  ;;                         ("~/Documents/org/todo.org"
+  ;;                          "~/Documents/org/idm.org"
+  ;;                          "~/Documents/org/journal.org"
+  ;;                          "~/Documents/org/work-notes.org"
+  ;;                          "~/Documents/org/big-picture.org"
+  ;;                          )))
+  (setq org-agenda-file-regexp "\\`[^.].*[^0-9].*\\.org\\'")
+  (setq org-agenda-files (quote ("~/Documents/org")))
   (setq org-capture-templates
-        '(("t" "Todo"       entry (file+datetree "~/Documents/org/todo.org")
-           "* TODO \n%T\n\n%?")
+        '(("p" "PMO"       entry (file+headline "~/Documents/org/PMO.org" "Inbox")
+           "* TODO %? %^G\n%T\n%a\n")
           ("j" "Journal"    entry (file+datetree "~/Documents/org/journal.org")
-           "* %? %^G\n%T")
-          ("i" "IDM"        entry (file+datetree "~/Documents/org/idm.org")
            "* %? %^G\n%T")
           ("w" "Work Notes" entry (file+datetree "~/Documents/org/work-notes.org")
            "* %? %^G\n%T")))
-
   (setq org-todo-keywords
         '((sequence "TODO" "HOLD" "|" "DONE")
           (sequence "PROPOSED" "UPCOMING" "|" "INPROCESS" "COMPLETE")
