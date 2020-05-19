@@ -6,6 +6,10 @@ if [ -d ~/Dropbox/bin ]; then
   PATH=$PATH:~/Dropbox/bin
 fi
 
+if [ -d ~/perl5/bin ]; then
+  PATH=$PATH:~/perl5/bin
+fi
+
 if [ -d /ipg/local/bin ]; then
   PATH=$PATH:/ipg/local/bin
 fi
@@ -34,6 +38,10 @@ fi
 
 if [ -d /usr/local/opt/coreutils/libexec/gnubin ]; then
   PATH=$PATH:/usr/local/opt/coreutils/libexec/gnubin
+fi
+
+if [ -d /usr/local/opt/grep/libexec/gnubin ]; then
+  PATH=$PATH:/usr/local/opt/grep/libexec/gnubin
 fi
 
 if [ -d /usr/local/mysql/bin ]; then
