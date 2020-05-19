@@ -21,11 +21,12 @@ export HISTSIZE=32768
 export HISTFILESIZE=$HISTSIZE
 
 if [ -d /opt/local/lib ]; then
-  export LD_LIBRARY_PATH=/opt/local/lib
+  export LD_LIBRARY_PATH=/opt/local/lib:$LD_LIBRARY_PATH
 fi
 if [ -d /usr/local/lib ]; then
-  export LD_LIBRARY_PATH=/usr/local/lib
+  export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 fi
+
 if [ -d /opt/local/man ]; then
   export MANPATH=/opt/local/man:$MANPATH
 fi
@@ -35,6 +36,11 @@ fi
 if [ -d /usr/local/opt/coreutils/libexec/gnuman ]; then
   export MANPATH=/usr/local/opt/coreutils/libexec/gnuman:$MANPATH
 fi
+
+if [ -d  ]; then
+  export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+fi
+
 
 ### local config settings, if any
 

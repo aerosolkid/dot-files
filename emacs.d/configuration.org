@@ -516,29 +516,40 @@ If I'm in =web-mode=, I'd like to:
 - Indent everything with 2 spaces.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package web-mode
-    :ensure t)
-  (add-hook 'web-mode-hook
-            (lambda ()
-              (rainbow-mode)
-              (setq web-mode-markup-indent-offset 2)
-              (setq web-mode-css-indent-offset 2)
-              (setq web-mode-code-indent-offset 2)
-              (setq web-mode-indent-style 2)
-              (setq web-mode-style-padding 1)
-              (setq web-mode-script-padding 1)
-              (setq web-mode-block-padding 0)))
+  (setq web-mode-enable-current-element-highlight t)
+  (setq web-mode-enable-current-column-highlight t)
+
+  (require 'web-mode)
+
+  (defun my-web-mode-hook ()
+    "Hooks for Web mode."
+    (rainbow-mode)
+    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-css-indent-offset 2)
+    (setq web-mode-code-indent-offset 2)
+    (setq web-mode-indent-style 2)
+    (setq web-mode-style-padding 1)
+    (setq web-mode-script-padding 1)
+    (setq web-mode-block-padding 0)
+    (setq web-mode-enable-css-colorization t)
+    (setq web-mode-enable-auto-pairing t)
+    )
+
+  (add-hook 'web-mode-hook  'my-web-mode-hook)
+
 #+END_SRC
 
 Use =web-mode= with regular HTML, and PHP.
 
 #+BEGIN_SRC emacs-lisp
-  (hrs/add-auto-mode
-   'web-mode
-   "\\.inc$"
-   "\\.html$"
-   "\\.php$"
-   "\\.rhtml$")
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 #+END_SRC
 
 Set up =auto-complete= for =web-mode=
@@ -888,7 +899,8 @@ https://truongtx.me/tmtxt-dired-async.html
 #+BEGIN_SRC emacs-lisp
   (require 'tramp)
   (setq tramp-default-method "ssh")
-  (push "/usr/local/bin" tramp-remote-path)
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  ;(push "/ipg/local/bin" tramp-remote-path)
 #+END_SRC
 ** My sensible defaults
 #+BEGIN_SRC emacs-lisp
