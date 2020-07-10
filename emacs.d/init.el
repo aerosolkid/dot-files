@@ -1,14 +1,12 @@
-;; Package management is first and foremost
 ;;
-(require 'package)
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(add-to-list 'package-archives '("org"   . "https://orgmode.org/elpa/")    t)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
-
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+;; Package Management
+;;
+(if (file-readable-p "~/.cask/cask.el")
+  (require 'cask "~/.cask/cask.el")
+  (if (file-readable-p "/usr/local/share/emacs/site-lisp/cask/cask.el")
+        (require 'cask "/usr/local/share/emacs/site-lisp/cask/cask.el")))
+(cask-initialize)
+(require 'pallet)
 
 ;;
 ;; And after that, let's make sure we're not binding META on a mac like an animal
