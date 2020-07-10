@@ -3,7 +3,7 @@ alias d="cd ~/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
 alias s="cd ~/src"
-alias h="history"
+alias h="history | tail"
 alias j="jobs"
 alias cls='clear'
 
