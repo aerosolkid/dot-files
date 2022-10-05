@@ -96,3 +96,44 @@ fk () {
     unset IFS
 }
 
+# wrapper around dregutil
+# https://github.com/merll/docker-registry-util
+function dregutil(){
+    declare REGISTRY=${REGISTRY:-'https://image-registry.interpublic.com:5000'}
+    declare -r LOCAL_DOCKER_CONFIG="${HOME}/.docker/config.json"
+    if [[ ! -f "$LOCAL_DOCKER_CONFIG" ]]
+    then
+        local username
+        local password
+        read -p  "Enter username for docker registry ${REGISTRY} " username
+        read -sp 'Enter password: ' password
+        CREDENTIALS="${username}:${password}"
+        docker login "${REGISTRY}" -u "$username" -p "$password"
+    fi
+    local encoded_credentials=$(jq --exit-status \
+                                   --raw-output ".[\"auths\"][\"${REGISTRY##*/}\"][\"auth\"]" \
+                                   < "$LOCAL_DOCKER_CONFIG")
+    if [[ $? -gt 0 ]]
+    then
+        # echo "$encoded_credentials"
+        echo "Problem reading $LOCAL_DOCKER_CONFIG"
+        if ! which jq >/dev/null
+        then
+            echo "Please install JSON parser \"jq\"".
+        fi
+        exit 1
+    fi
+    CREDENTIALS=$(base64 -d <(echo "$encoded_credentials"))
+    if [[ $? -gt 0 ]]
+    then
+        echo "Problem deccoding credentials."
+        if ! which base64 >/dev/null
+        then
+            echo "Please install utility \"base64\"."
+        fi
+        exit 1
+    fi
+    # split out username and password (colon delim)
+    command /usr/local/bin/dregutil --user "${CREDENTIALS%%:*}" \
+            --password "${CREDENTIALS#*:}" --registry "$REGISTRY" "$@"
+} # dregutil
